@@ -10,7 +10,7 @@
 //   - Vienen acompañados de "current_units" / "hourly_units" con las unidades.
 // El parseo de abajo es defensivo: si algún campo no viene, no rompe la app.
 
-import type { CondicionActual, PronosticoDia, PronosticoHora } from '../types';
+import type { CondicionActual, PronosticoDia, PronosticoDiario, PronosticoHora } from '../types';
 
 interface OpenMeteoResponse {
   current?: {
@@ -26,6 +26,12 @@ interface OpenMeteoResponse {
     wind_direction_10m?: number[];
     wind_gusts_10m?: number[];
     temperature_2m?: number[];
+  };
+  daily?: {
+    time?: string[];
+    wind_speed_10m_max?: number[];
+    wind_gusts_10m_max?: number[];
+    wind_direction_10m_dominant?: number[];
   };
 }
 
@@ -43,9 +49,10 @@ async function fetchForecast(lat: number, lon: number): Promise<OpenMeteoRespons
     longitude: String(lon),
     hourly: 'wind_speed_10m,wind_direction_10m,wind_gusts_10m,temperature_2m',
     current: 'temperature_2m,wind_speed_10m,wind_direction_10m,wind_gusts_10m',
+    daily: 'wind_speed_10m_max,wind_gusts_10m_max,wind_direction_10m_dominant',
     wind_speed_unit: 'kn',
     timezone: 'auto',
-    forecast_days: '2',
+    forecast_days: '7',
   });
   const res = await fetch(`${BASE_URL}?${params.toString()}`);
   if (!res.ok) {
@@ -104,5 +111,32 @@ export async function obtenerPronosticoHoy(lat: number, lon: number): Promise<Pr
   } catch (err) {
     console.error('Error obteniendo pronóstico de Open-Meteo:', err);
     return null;
+  }
+}
+
+export async function obtenerPronosticoSemana(lat: number, lon: number): Promise<PronosticoDiario[]> {
+  try {
+    const data = await fetchForecast(lat, lon);
+    const d = data.daily;
+    if (!d || !d.time || !d.wind_speed_10m_max) return [];
+
+    const diasSemana = ['dom', 'lun', 'mar', 'mié', 'jue', 'vie', 'sáb'];
+    const hoy = new Date();
+
+    return d.time.map((fecha, i) => {
+      const dt = new Date(`${fecha}T12:00:00`);
+      const esHoy = dt.toDateString() === hoy.toDateString();
+      const vientoMax = d.wind_speed_10m_max?.[i];
+      return {
+        fechaISO: fecha,
+        diaLabel: esHoy ? 'hoy' : diasSemana[dt.getDay()],
+        vientoMaxNudos: Math.round(vientoMax ?? 0),
+        rachaMaxNudos: Math.round(d.wind_gusts_10m_max?.[i] ?? vientoMax ?? 0),
+        direccionGrados: d.wind_direction_10m_dominant?.[i] ?? 0,
+      };
+    });
+  } catch (err) {
+    console.error('Error obteniendo pronóstico semanal de Open-Meteo:', err);
+    return [];
   }
 }

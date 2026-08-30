@@ -1,4 +1,4 @@
-import type { CondicionActual, PronosticoDia, Sesion, Spot } from '../types';
+import type { CondicionActual, PronosticoDia, PronosticoDiario, Sesion, Spot } from '../types';
 import ScreenHeader from '../components/ScreenHeader';
 import { IconArrowUp, IconPlus } from '../components/icons';
 import { formatearFechaHoy } from '../lib/format';
@@ -7,6 +7,7 @@ interface Props {
   spot: Spot;
   condicion: CondicionActual | null;
   pronostico: PronosticoDia | null;
+  pronosticoSemana: PronosticoDiario[];
   cargando: boolean;
   error: boolean;
   sesiones: Sesion[];
@@ -30,10 +31,13 @@ function calcularRachaDias(sesiones: Sesion[]): number {
   return racha;
 }
 
-export default function WindScreen({ spot, condicion, pronostico, cargando, error, sesiones, onNuevaSesion }: Props) {
+export default function WindScreen({ spot, condicion, pronostico, pronosticoSemana, cargando, error, sesiones, onNuevaSesion }: Props) {
   const racha = calcularRachaDias(sesiones);
   const maxViento = pronostico?.horas.length
     ? Math.max(...pronostico.horas.map((h) => h.vientoNudos), 1)
+    : 1;
+  const maxVientoSemana = pronosticoSemana.length
+    ? Math.max(...pronosticoSemana.map((d) => d.vientoMaxNudos), 1)
     : 1;
 
   return (
@@ -82,7 +86,7 @@ export default function WindScreen({ spot, condicion, pronostico, cargando, erro
         <StatCard label="Racha" value={racha > 0 ? `${racha}d` : '—'} delay="180ms" accent={racha > 0} />
       </div>
 
-      <div style={{ padding: '22px 20px 0 20px', flex: 1, overflow: 'hidden' }}>
+      <div style={{ padding: '22px 20px 0 20px', flex: 1, overflowY: 'auto' }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10 }}>
           <div style={{ fontSize: 13, fontWeight: 600 }}>Pronóstico de hoy</div>
         </div>
@@ -119,9 +123,47 @@ export default function WindScreen({ spot, condicion, pronostico, cargando, erro
         ) : (
           <div style={{ fontSize: 12, color: 'var(--muted)' }}>{cargando ? 'Cargando…' : 'Sin pronóstico disponible.'}</div>
         )}
+
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', margin: '22px 0 10px 0' }}>
+          <div style={{ fontSize: 13, fontWeight: 600 }}>Pronóstico de la semana</div>
+        </div>
+        {pronosticoSemana.length > 0 ? (
+          <div style={{ display: 'flex', gap: 6, alignItems: 'flex-end', paddingBottom: 8 }}>
+            {pronosticoSemana.map((d, i) => {
+              const alto = Math.max(20, Math.round((d.vientoMaxNudos / maxVientoSemana) * 64));
+              const esFuerte = d.vientoMaxNudos === maxVientoSemana;
+              return (
+                <div key={d.fechaISO} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8 }}>
+                  <div
+                    className="disp"
+                    style={{ fontSize: 12, fontWeight: esFuerte ? 700 : 600, color: esFuerte ? 'var(--accent)' : 'var(--ink)' }}
+                  >
+                    {d.vientoMaxNudos}
+                  </div>
+                  <div
+                    className="bar-grow"
+                    style={{
+                      width: '100%',
+                      height: alto,
+                      background: esFuerte ? 'var(--accent)' : 'var(--card-alt)',
+                      borderRadius: 6,
+                      animationDelay: `${240 + i * 30}ms`,
+                    }}
+                  />
+                  <div style={{ fontSize: 10, color: esFuerte ? 'var(--accent)' : 'var(--muted)', fontWeight: esFuerte ? 600 : 400, textTransform: 'capitalize' }}>
+                    {d.diaLabel}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        ) : (
+          <div style={{ fontSize: 12, color: 'var(--muted)' }}>{cargando ? 'Cargando…' : 'Sin pronóstico disponible.'}</div>
+        )}
+        <div style={{ height: 6 }} />
       </div>
 
-      <div style={{ padding: '0 20px 14px 20px' }}>
+      <div style={{ padding: '14px 20px 14px 20px' }}>
         <button
           className="press"
           onClick={onNuevaSesion}

@@ -7,10 +7,10 @@ const KEY_SESIONES = 'wingfoil.sesiones.v1';
 const KEY_SPOT = 'wingfoil.spot.v1';
 
 const SPOT_DEFAULT: Spot = {
-  id: 'el-pato',
-  nombre: 'El Pato',
-  lat: -34.4708,
-  lon: -58.5064,
+  id: 'laguna-setubal',
+  nombre: 'Laguna Setúbal',
+  lat: -31.6151,
+  lon: -60.6926,
 };
 
 function generarId(): string {

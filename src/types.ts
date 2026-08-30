@@ -44,3 +44,11 @@ export interface PronosticoDia {
   fechaISO: string;
   horas: PronosticoHora[];
 }
+
+export interface PronosticoDiario {
+  fechaISO: string; // "2026-08-31"
+  diaLabel: string; // "hoy", "lun", "mar"...
+  vientoMaxNudos: number;
+  rachaMaxNudos: number;
+  direccionGrados: number;
+}

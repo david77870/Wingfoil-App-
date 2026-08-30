@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
-import type { CondicionActual, PronosticoDia, Sesion } from './types';
-import { obtenerCondicionActual, obtenerPronosticoHoy } from './lib/openMeteo';
-import { obtenerSesiones, guardarSesion, eliminarSesion, obtenerSpot } from './lib/storage';
+import type { CondicionActual, PronosticoDia, PronosticoDiario, Sesion, Spot } from './types';
+import { obtenerCondicionActual, obtenerPronosticoHoy, obtenerPronosticoSemana } from './lib/openMeteo';
+import { obtenerSesiones, guardarSesion, eliminarSesion, obtenerSpot, guardarSpot } from './lib/storage';
 import TabBar, { type Tab } from './components/TabBar';
 import SplashScreen from './screens/SplashScreen';
 import WindScreen from './screens/WindScreen';
@@ -16,11 +16,12 @@ export default function App() {
   const [tab, setTab] = useState<Tab>('viento');
   const [mostrarNuevaSesion, setMostrarNuevaSesion] = useState(false);
 
-  const [spot] = useState(obtenerSpot());
+  const [spot, setSpot] = useState<Spot>(obtenerSpot());
   const [sesiones, setSesiones] = useState<Sesion[]>(() => obtenerSesiones());
 
   const [condicion, setCondicion] = useState<CondicionActual | null>(null);
   const [pronostico, setPronostico] = useState<PronosticoDia | null>(null);
+  const [pronosticoSemana, setPronosticoSemana] = useState<PronosticoDiario[]>([]);
   const [cargando, setCargando] = useState(true);
   const [error, setError] = useState(false);
 
@@ -29,13 +30,15 @@ export default function App() {
 
     async function cargar() {
       setCargando(true);
-      const [c, p] = await Promise.all([
+      const [c, p, s] = await Promise.all([
         obtenerCondicionActual(spot.lat, spot.lon),
         obtenerPronosticoHoy(spot.lat, spot.lon),
+        obtenerPronosticoSemana(spot.lat, spot.lon),
       ]);
       if (!activo) return;
       setCondicion(c);
       setPronostico(p);
+      setPronosticoSemana(s);
       setError(!c && !p);
       setCargando(false);
     }
@@ -46,15 +49,26 @@ export default function App() {
       activo = false;
       clearInterval(intervalo);
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [spot.lat, spot.lon]);
+
+  function handleGuardarSpot(nuevoSpot: Spot) {
+    guardarSpot(nuevoSpot);
+    setSpot(nuevoSpot);
+  }
 
   useEffect(() => {
     const t = setTimeout(() => setMostrarSplash(false), 900);
     return () => clearTimeout(t);
   }, []);
 
-  function handleGuardarSesion(datos: { fechaHoraISO: string; duracionMin: number; equipo: string[]; calificacion: number }) {
+  function handleGuardarSesion(datos: {
+    fechaHoraISO: string;
+    duracionMin: number;
+    equipo: string[];
+    calificacion: number;
+    vientoNudos: number | null;
+    vientoDireccion: string | null;
+  }) {
     const ala = datos.equipo.find((e) => e.toLowerCase().startsWith('ala')) ?? null;
     const tabla = datos.equipo.find((e) => e.toLowerCase().startsWith('tabla')) ?? null;
     guardarSesion({
@@ -64,8 +78,8 @@ export default function App() {
       ala,
       tabla,
       calificacion: datos.calificacion,
-      vientoNudos: condicion?.vientoNudos ?? null,
-      vientoDireccion: condicion?.direccionTexto ?? null,
+      vientoNudos: datos.vientoNudos,
+      vientoDireccion: datos.vientoDireccion,
     });
     setSesiones(obtenerSesiones());
     setMostrarNuevaSesion(false);
@@ -93,6 +107,7 @@ export default function App() {
             spot={spot}
             condicion={condicion}
             pronostico={pronostico}
+            pronosticoSemana={pronosticoSemana}
             cargando={cargando}
             error={error}
             sesiones={sesiones}
@@ -109,6 +124,7 @@ export default function App() {
               condicion={condicion}
               onCancelar={() => setMostrarNuevaSesion(false)}
               onGuardar={handleGuardarSesion}
+              onGuardarSpot={handleGuardarSpot}
             />
           </div>
         )}
