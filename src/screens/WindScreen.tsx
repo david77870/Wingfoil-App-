@@ -1,6 +1,6 @@
-import type { CondicionActual, PronosticoDia, PronosticoDiario, Sesion, Spot } from '../types';
+import type { CondicionActual, PronosticoDia, PronosticoDiario, PronosticoHora, Sesion, Spot } from '../types';
 import ScreenHeader from '../components/ScreenHeader';
-import { IconArrowUp, IconPlus, IconSettings } from '../components/icons';
+import { IconPlus, IconSettings } from '../components/icons';
 import { formatearFechaHoy } from '../lib/format';
 import { iconoClima } from '../lib/openMeteo';
 
@@ -16,12 +16,62 @@ interface Props {
   onAjustes: () => void;
 }
 
-function categorizarViento(nudos: number): { label: string; color: string; bg: string } {
-  if (nudos < 8) return { label: 'Flojo', color: '#8fa8c9', bg: 'rgba(143,168,201,0.18)' };
-  if (nudos < 14) return { label: 'Suave', color: '#5aa9e6', bg: 'rgba(90,169,230,0.18)' };
-  if (nudos < 22) return { label: 'Ideal para wing', color: '#43c07f', bg: 'rgba(67,192,127,0.18)' };
-  if (nudos < 30) return { label: 'Fuerte', color: '#e0a52f', bg: 'rgba(224,165,47,0.18)' };
-  return { label: 'Extremo', color: '#e05a45', bg: 'rgba(224,90,69,0.18)' };
+function categorizarViento(nudos: number): { label: string; color: string; bg: string; variante: string } {
+  if (nudos < 7) return { label: 'Calma', color: '#7f97b3', bg: 'rgba(127,151,179,0.2)', variante: 'calma' };
+  if (nudos < 16) return { label: 'Ideal para wing', color: '#168b96', bg: 'rgba(22,139,150,0.18)', variante: 'ideal' };
+  if (nudos < 26) return { label: 'Fuerte', color: '#287fe0', bg: 'rgba(40,127,224,0.2)', variante: 'fuerte' };
+  return { label: 'Día épico', color: '#e08a3d', bg: 'rgba(224,138,61,0.22)', variante: 'epico' };
+}
+
+function HydrofoilMark({ size = 300 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 300 300" fill="none">
+      <path
+        d="M150,26 C186,26 200,64 200,150 C200,236 186,274 150,274 C114,274 100,236 100,150 C100,64 114,26 150,26 Z"
+        stroke="#ffffff"
+        strokeWidth="1.4"
+      />
+      <line x1="150" y1="150" x2="150" y2="238" stroke="#ffffff" strokeWidth="1.4" />
+      <line x1="107" y1="196" x2="193" y2="196" stroke="#ffffff" strokeWidth="1.4" />
+      <line x1="128" y1="232" x2="172" y2="232" stroke="#ffffff" strokeWidth="1.4" />
+    </svg>
+  );
+}
+
+function Sparkline({ horas, maxViento }: { horas: PronosticoHora[]; maxViento: number }) {
+  const w = 300;
+  const h = 40;
+  const pad = 6;
+  const minViento = Math.min(...horas.map((h) => h.vientoNudos));
+  const rango = Math.max(1, maxViento - minViento);
+  const paso = horas.length > 1 ? (w - pad * 2) / (horas.length - 1) : 0;
+
+  const puntos = horas.map((hora, i) => {
+    const x = pad + i * paso;
+    const y = pad + (1 - (hora.vientoNudos - minViento) / rango) * (h - pad * 2);
+    return { x, y, valor: hora.vientoNudos };
+  });
+
+  const linea = puntos.map((p) => `${p.x},${p.y}`).join(' ');
+  const area = `${pad},${h} ${linea} ${w - pad},${h}`;
+
+  return (
+    <svg width="100%" height={h} viewBox={`0 0 ${w} ${h}`} preserveAspectRatio="none" style={{ display: 'block', overflow: 'visible' }}>
+      <polygon points={area} fill="var(--teal)" opacity="0.1" />
+      <polyline points={linea} fill="none" stroke="var(--teal)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+      {puntos.map((p, i) => (
+        <circle key={i} cx={p.x} cy={p.y} r={i === puntos.length - 1 ? 4 : 2.5} fill={i === puntos.length - 1 ? 'var(--accent)' : 'var(--teal)'} />
+      ))}
+    </svg>
+  );
+}
+
+function tendenciaViento(horas: PronosticoHora[]): { texto: string; simbolo: string; color: string } | null {
+  if (horas.length < 2) return null;
+  const delta = horas[horas.length - 1].vientoNudos - horas[0].vientoNudos;
+  if (delta >= 2) return { texto: 'Aumentando', simbolo: '↑', color: 'var(--teal)' };
+  if (delta <= -2) return { texto: 'Bajando', simbolo: '↓', color: 'var(--muted)' };
+  return { texto: 'Estable', simbolo: '→', color: 'var(--muted)' };
 }
 
 function BrujulaViento({ grados, activo }: { grados: number; activo: boolean }) {
@@ -34,8 +84,8 @@ function BrujulaViento({ grados, activo }: { grados: number; activo: boolean }) 
       </text>
       {activo && (
         <g transform={`rotate(${grados} 33 33)`} style={{ transition: 'transform 600ms cubic-bezier(0.23, 1, 0.32, 1)' }}>
-          <line x1="33" y1="33" x2="33" y2="16" stroke="#2f7de0" strokeWidth="3" strokeLinecap="round" />
-          <polygon points="33,10 28,20 38,20" fill="#2f7de0" />
+          <line x1="33" y1="33" x2="33" y2="16" stroke="#287fe0" strokeWidth="3" strokeLinecap="round" />
+          <polygon points="33,10 28,20 38,20" fill="#287fe0" />
         </g>
       )}
     </svg>
@@ -79,7 +129,7 @@ export default function WindScreen({ spot, condicion, pronostico, pronosticoSema
 
       <div className="rise" style={{ padding: '0 20px', animationDelay: '60ms' }}>
         <div
-          className="wind-hero"
+          className={`wind-hero wind-hero--${condicion ? categorizarViento(condicion.vientoNudos).variante : 'ideal'}`}
           style={{
             borderRadius: 20,
             padding: '26px 24px',
@@ -87,23 +137,27 @@ export default function WindScreen({ spot, condicion, pronostico, pronosticoSema
             overflow: 'hidden',
           }}
         >
+          <div className="wind-hero-foil" style={{ right: -70, bottom: -90, transform: 'rotate(18deg)' }}>
+            <HydrofoilMark size={280} />
+          </div>
+
           {error && !condicion ? (
-            <div style={{ position: 'relative' }}>
+            <div className="wind-hero-content">
               <div style={{ fontSize: 15, color: '#ffffff', fontWeight: 600 }}>Sin datos de viento</div>
               <div style={{ fontSize: 12, color: 'var(--muted-2)', marginTop: 6 }}>
                 No pudimos conectar con el servicio de pronóstico. Revisá tu conexión.
               </div>
             </div>
           ) : (
-            <>
+            <div className="wind-hero-content">
               <div style={{ position: 'absolute', right: 18, top: 18 }}>
                 <BrujulaViento grados={condicion?.direccionGrados ?? 0} activo={!!condicion} />
               </div>
-              <div style={{ display: 'flex', alignItems: 'baseline', gap: 8, position: 'relative' }}>
+              <div style={{ display: 'flex', alignItems: 'baseline', gap: 8 }}>
                 <div className="disp" style={{ fontSize: 68, fontWeight: 700, color: '#ffffff', lineHeight: 1, letterSpacing: '-1px' }}>
                   {condicion ? condicion.vientoNudos : cargando ? '–' : '–'}
                 </div>
-                <div style={{ fontSize: 16, color: 'var(--accent)', fontWeight: 600 }}>
+                <div style={{ fontSize: 16, color: '#7fc2ff', fontWeight: 600 }}>
                   kt {condicion?.direccionTexto ?? ''}
                 </div>
               </div>
@@ -132,13 +186,7 @@ export default function WindScreen({ spot, condicion, pronostico, pronosticoSema
               <div style={{ fontSize: 13, color: 'var(--muted-2)', marginTop: 10 }}>
                 {condicion ? `Racha ${condicion.rachaNudos}kt · ${condicion.tempAireC}° de aire` : cargando ? 'Cargando pronóstico…' : 'Sin datos por ahora'}
               </div>
-              {pronostico && pronostico.horas.length > 1 && pronostico.horas[1].vientoNudos > pronostico.horas[0].vientoNudos && (
-                <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginTop: 16 }}>
-                  <IconArrowUp />
-                  <div style={{ fontSize: 12, color: 'var(--accent)', fontWeight: 600 }}>Subiendo la próxima hora</div>
-                </div>
-              )}
-            </>
+            </div>
           )}
         </div>
       </div>
@@ -152,36 +200,37 @@ export default function WindScreen({ spot, condicion, pronostico, pronosticoSema
       <div style={{ padding: '22px 20px 0 20px', flex: 1, overflowY: 'auto' }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10 }}>
           <div style={{ fontSize: 13, fontWeight: 600 }}>Pronóstico de hoy</div>
-        </div>
-        {pronostico && pronostico.horas.length > 0 ? (
-          <div style={{ display: 'flex', gap: 8, alignItems: 'flex-end' }}>
-            {pronostico.horas.map((h, i) => {
-              const alto = Math.max(20, Math.round((h.vientoNudos / maxViento) * 64));
-              const esFuerte = h.vientoNudos === maxViento;
+          {pronostico &&
+            pronostico.horas.length > 1 &&
+            (() => {
+              const t = tendenciaViento(pronostico.horas);
+              if (!t) return null;
               return (
-                <div key={h.horaISO} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8 }}>
-                  <div
-                    className="disp"
-                    style={{ fontSize: 12, fontWeight: esFuerte ? 700 : 600, color: esFuerte ? 'var(--accent)' : 'var(--ink)' }}
-                  >
-                    {h.vientoNudos}
-                  </div>
-                  <div
-                    className="bar-grow"
-                    style={{
-                      width: '100%',
-                      height: alto,
-                      background: esFuerte ? 'var(--accent)' : 'var(--card-alt)',
-                      borderRadius: 6,
-                      animationDelay: `${220 + i * 30}ms`,
-                    }}
-                  />
-                  <div style={{ fontSize: 10, color: esFuerte ? 'var(--accent)' : 'var(--muted)', fontWeight: esFuerte ? 600 : 400 }}>
-                    {h.hora}
-                  </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: 11, fontWeight: 600, color: t.color }}>
+                  <span>{t.simbolo}</span>
+                  {t.texto}
                 </div>
               );
-            })}
+            })()}
+        </div>
+        {pronostico && pronostico.horas.length > 0 ? (
+          <div>
+            <Sparkline horas={pronostico.horas} maxViento={maxViento} />
+            <div style={{ display: 'flex', marginTop: 6 }}>
+              {pronostico.horas.map((h) => {
+                const esFuerte = h.vientoNudos === maxViento;
+                return (
+                  <div key={h.horaISO} style={{ flex: 1, textAlign: 'center' }}>
+                    <div className="disp" style={{ fontSize: 12, fontWeight: esFuerte ? 700 : 600, color: esFuerte ? 'var(--accent)' : 'var(--ink)' }}>
+                      {h.vientoNudos}
+                    </div>
+                    <div style={{ fontSize: 10, color: esFuerte ? 'var(--accent)' : 'var(--muted)', fontWeight: esFuerte ? 600 : 400, marginTop: 2 }}>
+                      {h.hora}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
           </div>
         ) : (
           <div style={{ fontSize: 12, color: 'var(--muted)' }}>{cargando ? 'Cargando…' : 'Sin pronóstico disponible.'}</div>
@@ -192,7 +241,17 @@ export default function WindScreen({ spot, condicion, pronostico, pronosticoSema
           <div style={{ fontSize: 11, color: 'var(--muted)', marginTop: 2 }}>Clima y viento máximo · próximos 7 días</div>
         </div>
         {pronosticoSemana.length > 0 ? (
-          <div style={{ display: 'flex', gap: 8, overflowX: 'auto', paddingBottom: 8, marginTop: 10 }}>
+          <div
+            className="no-scrollbar"
+            style={{
+              display: 'flex',
+              gap: 8,
+              overflowX: 'auto',
+              paddingBottom: 4,
+              marginTop: 10,
+              scrollSnapType: 'x proximity',
+            }}
+          >
             {pronosticoSemana.map((d, i) => {
               const esFuerte = d.vientoMaxNudos === maxVientoSemana;
               return (
@@ -211,6 +270,7 @@ export default function WindScreen({ spot, condicion, pronostico, pronosticoSema
                     alignItems: 'center',
                     gap: 6,
                     animationDelay: `${240 + i * 30}ms`,
+                    scrollSnapAlign: 'start',
                   }}
                 >
                   <div style={{ fontSize: 10, fontWeight: 600, textTransform: 'capitalize', color: esFuerte ? 'var(--accent)' : 'var(--ink)' }}>

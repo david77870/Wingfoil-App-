@@ -10,8 +10,8 @@ interface Props {
 export default function TabBar({ active, onChange }: Props) {
   const items: { key: Tab; label: string; Icon: typeof IconWind }[] = [
     { key: 'viento', label: 'Viento', Icon: IconWind },
-    { key: 'historial', label: 'Historial', Icon: IconHistory },
-    { key: 'aprender', label: 'Aprender', Icon: IconBook },
+    { key: 'historial', label: 'Progreso', Icon: IconHistory },
+    { key: 'aprender', label: 'Guías', Icon: IconBook },
   ];
 
   return (

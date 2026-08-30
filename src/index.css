@@ -1,15 +1,17 @@
 :root {
-  --bg: linear-gradient(180deg, #eaf1fb 0%, #e7f2ef 55%, #e2efea 100%);
-  --ink: #10233a;
-  --ink-2: #1c3654;
-  --accent: #2f7de0;
-  --accent-2: #2566ba;
-  --muted: #7c8ea3;
-  --muted-2: #8fa8c9;
-  --icon-muted: #aebdd1;
-  --border: #dde6f0;
-  --card-alt: #e6edf5;
-  --card-accent-soft: #e2ecfb;
+  --bg: radial-gradient(130% 90% at 50% -15%, #edf7f6 0%, #e8f1f1 55%, #e3ecea 100%);
+  --ink: #18324a;
+  --ink-2: #123b67;
+  --accent: #287fe0;
+  --accent-2: #1f68bd;
+  --teal: #168b96;
+  --warm: #e08a3d;
+  --muted: #5c7290;
+  --muted-2: #7f97b3;
+  --icon-muted: #a7bbcf;
+  --border: #d7e6e4;
+  --card-alt: #e3eeed;
+  --card-accent-soft: #dbeaf5;
   --star-empty: #d8d9d6;
   --danger: #d64545;
 
@@ -28,7 +30,7 @@ body {
 
 body {
   font-family: 'Work Sans', system-ui, sans-serif;
-  background: #e4e9ef;
+  background: #dde9e7;
   color: var(--ink);
   -webkit-tap-highlight-color: transparent;
 }
@@ -152,24 +154,51 @@ input[type='datetime-local'] {
 }
 
 .wind-hero {
-  background:
-    radial-gradient(120% 90% at 12% 8%, rgba(45, 212, 191, 0.4), transparent 55%),
-    radial-gradient(100% 80% at 88% 28%, rgba(47, 125, 224, 0.45), transparent 60%),
-    radial-gradient(140% 100% at 50% 105%, rgba(9, 18, 32, 0.95), transparent 70%),
-    linear-gradient(160deg, #0c1e34 0%, #123457 55%, #17436b 100%);
   background-size: 220% 220%, 220% 220%, 160% 160%, 100% 100%;
-  animation: corrienteDrift 16s ease-in-out infinite;
+  animation: corrienteDrift 13s ease-in-out infinite;
+}
+
+.wind-hero--calma {
+  background:
+    radial-gradient(120% 90% at 14% 10%, rgba(127, 151, 179, 0.3), transparent 58%),
+    radial-gradient(100% 80% at 86% 30%, rgba(40, 127, 224, 0.22), transparent 62%),
+    radial-gradient(140% 100% at 50% 105%, rgba(8, 15, 26, 0.92), transparent 70%),
+    linear-gradient(160deg, #17293d 0%, #1c3652 55%, #223f5d 100%);
+}
+
+.wind-hero--ideal {
+  background:
+    radial-gradient(120% 90% at 12% 8%, rgba(22, 139, 150, 0.4), transparent 56%),
+    radial-gradient(100% 80% at 88% 28%, rgba(40, 127, 224, 0.4), transparent 60%),
+    radial-gradient(140% 100% at 50% 105%, rgba(7, 15, 25, 0.94), transparent 70%),
+    linear-gradient(160deg, #0d2233 0%, #123a55 55%, #135a65 100%);
+}
+
+.wind-hero--fuerte {
+  background:
+    radial-gradient(120% 90% at 12% 8%, rgba(40, 127, 224, 0.48), transparent 56%),
+    radial-gradient(100% 80% at 88% 28%, rgba(18, 59, 103, 0.55), transparent 60%),
+    radial-gradient(140% 100% at 50% 105%, rgba(5, 11, 20, 0.95), transparent 70%),
+    linear-gradient(160deg, #0a1c2f 0%, #123b67 55%, #1c4f86 100%);
+}
+
+.wind-hero--epico {
+  background:
+    radial-gradient(120% 90% at 12% 8%, rgba(224, 138, 61, 0.3), transparent 56%),
+    radial-gradient(100% 80% at 88% 28%, rgba(40, 127, 224, 0.4), transparent 60%),
+    radial-gradient(140% 100% at 50% 105%, rgba(10, 8, 8, 0.94), transparent 70%),
+    linear-gradient(160deg, #1c1a2a 0%, #123b67 55%, #17436b 100%);
 }
 
 @keyframes corrienteDrift {
   0% {
-    background-position: 10% 20%, 100% 10%, 50% 100%, 0 0;
+    background-position: 22% 32%, 88% 22%, 50% 100%, 0 0;
   }
   50% {
-    background-position: 35% 65%, 55% 55%, 40% 85%, 0 0;
+    background-position: 32% 46%, 74% 36%, 46% 92%, 0 0;
   }
   100% {
-    background-position: 10% 20%, 100% 10%, 50% 100%, 0 0;
+    background-position: 22% 32%, 88% 22%, 50% 100%, 0 0;
   }
 }
 
@@ -177,4 +206,25 @@ input[type='datetime-local'] {
   .wind-hero {
     animation: none;
   }
+}
+
+.wind-hero-foil {
+  position: absolute;
+  pointer-events: none;
+  opacity: 0.07;
+  z-index: 0;
+}
+
+.wind-hero-content {
+  position: relative;
+  z-index: 1;
+}
+
+.no-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
 }

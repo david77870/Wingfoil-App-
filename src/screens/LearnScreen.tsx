@@ -23,7 +23,7 @@ const TIPS = [
 export default function LearnScreen({ onAjustes }: Props) {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100%', overflow: 'hidden' }}>
-      <ScreenHeader title="Aprender" subtitle="guías y buenas prácticas" rightIcon={<IconSettings />} onRightIconClick={onAjustes} />
+      <ScreenHeader title="Guías" subtitle="buenas prácticas para el agua" rightIcon={<IconSettings />} onRightIconClick={onAjustes} />
       <div style={{ flex: 1, overflowY: 'auto', padding: '0 20px 20px 20px', display: 'flex', flexDirection: 'column', gap: 10 }}>
         {TIPS.map((tip, i) => (
           <div
