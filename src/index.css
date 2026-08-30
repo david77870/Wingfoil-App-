@@ -1,5 +1,5 @@
 :root {
-  --bg: #f4f7fa;
+  --bg: linear-gradient(180deg, #eaf1fb 0%, #e7f2ef 55%, #e2efea 100%);
   --ink: #10233a;
   --ink-2: #1c3654;
   --accent: #2f7de0;
@@ -149,4 +149,32 @@ button {
 
 input[type='datetime-local'] {
   font-family: 'Work Sans', system-ui, sans-serif;
+}
+
+.wind-hero {
+  background:
+    radial-gradient(120% 90% at 12% 8%, rgba(45, 212, 191, 0.4), transparent 55%),
+    radial-gradient(100% 80% at 88% 28%, rgba(47, 125, 224, 0.45), transparent 60%),
+    radial-gradient(140% 100% at 50% 105%, rgba(9, 18, 32, 0.95), transparent 70%),
+    linear-gradient(160deg, #0c1e34 0%, #123457 55%, #17436b 100%);
+  background-size: 220% 220%, 220% 220%, 160% 160%, 100% 100%;
+  animation: corrienteDrift 16s ease-in-out infinite;
+}
+
+@keyframes corrienteDrift {
+  0% {
+    background-position: 10% 20%, 100% 10%, 50% 100%, 0 0;
+  }
+  50% {
+    background-position: 35% 65%, 55% 55%, 40% 85%, 0 0;
+  }
+  100% {
+    background-position: 10% 20%, 100% 10%, 50% 100%, 0 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wind-hero {
+    animation: none;
+  }
 }

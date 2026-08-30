@@ -32,10 +32,27 @@ interface OpenMeteoResponse {
     wind_speed_10m_max?: number[];
     wind_gusts_10m_max?: number[];
     wind_direction_10m_dominant?: number[];
+    temperature_2m_max?: number[];
+    temperature_2m_min?: number[];
+    weather_code?: number[];
   };
 }
 
 const BASE_URL = 'https://api.open-meteo.com/v1/forecast';
+
+export function iconoClima(codigo: number): string {
+  if (codigo === 0) return '☀️';
+  if (codigo <= 2) return '🌤️';
+  if (codigo === 3) return '☁️';
+  if (codigo === 45 || codigo === 48) return '🌫️';
+  if (codigo >= 51 && codigo <= 57) return '🌦️';
+  if (codigo >= 61 && codigo <= 67) return '🌧️';
+  if (codigo >= 71 && codigo <= 77) return '🌨️';
+  if (codigo >= 80 && codigo <= 82) return '🌧️';
+  if (codigo >= 85 && codigo <= 86) return '🌨️';
+  if (codigo >= 95) return '⛈️';
+  return '⛅';
+}
 
 export function direccionATexto(grados: number): string {
   const puntos = ['N', 'NE', 'E', 'SE', 'S', 'SO', 'O', 'NO'];
@@ -49,7 +66,7 @@ async function fetchForecast(lat: number, lon: number): Promise<OpenMeteoRespons
     longitude: String(lon),
     hourly: 'wind_speed_10m,wind_direction_10m,wind_gusts_10m,temperature_2m',
     current: 'temperature_2m,wind_speed_10m,wind_direction_10m,wind_gusts_10m',
-    daily: 'wind_speed_10m_max,wind_gusts_10m_max,wind_direction_10m_dominant',
+    daily: 'wind_speed_10m_max,wind_gusts_10m_max,wind_direction_10m_dominant,temperature_2m_max,temperature_2m_min,weather_code',
     wind_speed_unit: 'kn',
     timezone: 'auto',
     forecast_days: '7',
@@ -133,6 +150,9 @@ export async function obtenerPronosticoSemana(lat: number, lon: number): Promise
         vientoMaxNudos: Math.round(vientoMax ?? 0),
         rachaMaxNudos: Math.round(d.wind_gusts_10m_max?.[i] ?? vientoMax ?? 0),
         direccionGrados: d.wind_direction_10m_dominant?.[i] ?? 0,
+        tempMaxC: Math.round(d.temperature_2m_max?.[i] ?? 0),
+        tempMinC: Math.round(d.temperature_2m_min?.[i] ?? 0),
+        weatherCode: d.weather_code?.[i] ?? 0,
       };
     });
   } catch (err) {

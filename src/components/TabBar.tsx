@@ -22,7 +22,7 @@ export default function TabBar({ active, onChange }: Props) {
         alignItems: 'center',
         padding: '10px 0 max(20px, env(safe-area-inset-bottom)) 0',
         borderTop: '1px solid var(--border)',
-        background: 'var(--bg)',
+        background: 'transparent',
       }}
     >
       {items.map(({ key, label, Icon }) => {

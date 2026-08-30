@@ -51,4 +51,7 @@ export interface PronosticoDiario {
   vientoMaxNudos: number;
   rachaMaxNudos: number;
   direccionGrados: number;
+  tempMaxC: number;
+  tempMinC: number;
+  weatherCode: number;
 }

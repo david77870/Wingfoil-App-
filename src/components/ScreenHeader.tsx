@@ -5,9 +5,22 @@ interface Props {
   title: string;
   subtitle?: string;
   rightIcon?: ReactNode;
+  onRightIconClick?: () => void;
 }
 
-export default function ScreenHeader({ title, subtitle, rightIcon }: Props) {
+export default function ScreenHeader({ title, subtitle, rightIcon, onRightIconClick }: Props) {
+  const circleStyle = {
+    width: 34,
+    height: 34,
+    borderRadius: '50%',
+    background: 'var(--card-alt)',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexShrink: 0,
+    border: 'none',
+  } as const;
+
   return (
     <div
       className="rise"
@@ -27,20 +40,13 @@ export default function ScreenHeader({ title, subtitle, rightIcon }: Props) {
           {subtitle && <div style={{ fontSize: 12, color: 'var(--muted)', marginTop: 2 }}>{subtitle}</div>}
         </div>
       </div>
-      <div
-        style={{
-          width: 34,
-          height: 34,
-          borderRadius: '50%',
-          background: 'var(--card-alt)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          flexShrink: 0,
-        }}
-      >
-        {rightIcon ?? <IconUser />}
-      </div>
+      {onRightIconClick ? (
+        <button className="press" onClick={onRightIconClick} aria-label="Ajustes" style={circleStyle}>
+          {rightIcon ?? <IconUser />}
+        </button>
+      ) : (
+        <div style={circleStyle}>{rightIcon ?? <IconUser />}</div>
+      )}
     </div>
   );
 }

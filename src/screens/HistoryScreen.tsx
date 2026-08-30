@@ -1,11 +1,13 @@
 import type { Sesion } from '../types';
 import ScreenHeader from '../components/ScreenHeader';
-import { IconWind, IconMenu, IconTrash } from '../components/icons';
+import { IconWind, IconSettings, IconTrash, IconChevronRight } from '../components/icons';
 import { formatearFechaHoy, formatearDuracion } from '../lib/format';
 
 interface Props {
   sesiones: Sesion[];
   onEliminar: (id: string) => void;
+  onVerSesion: (id: string) => void;
+  onAjustes: () => void;
 }
 
 const MESES = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
@@ -38,7 +40,7 @@ function calcularRachaDias(sesiones: Sesion[]): number {
   return racha;
 }
 
-export default function HistoryScreen({ sesiones, onEliminar }: Props) {
+export default function HistoryScreen({ sesiones, onEliminar, onVerSesion, onAjustes }: Props) {
   const totalHoras = Math.round(sesiones.reduce((acc, s) => acc + s.duracionMin, 0) / 60);
   const racha = calcularRachaDias(sesiones);
   const meses = agruparPorMes(sesiones);
@@ -46,7 +48,7 @@ export default function HistoryScreen({ sesiones, onEliminar }: Props) {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100%', overflow: 'hidden' }}>
-      <ScreenHeader title="Tu progreso" rightIcon={<IconMenu />} />
+      <ScreenHeader title="Tu progreso" rightIcon={<IconSettings />} onRightIconClick={onAjustes} />
 
       <div className="rise" style={{ padding: '0 20px', animationDelay: '60ms' }}>
         <div style={{ background: 'var(--ink)', borderRadius: 20, padding: '22px 22px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
@@ -114,6 +116,7 @@ export default function HistoryScreen({ sesiones, onEliminar }: Props) {
               <div
                 key={s.id}
                 className="rise press"
+                onClick={() => onVerSesion(s.id)}
                 style={{
                   display: 'flex',
                   alignItems: 'center',
@@ -133,11 +136,16 @@ export default function HistoryScreen({ sesiones, onEliminar }: Props) {
                   <div style={{ fontSize: 11, color: 'var(--muted)', marginTop: 1 }}>
                     {formatearFechaHoy(s.fechaHoraISO)} · {formatearDuracion(s.duracionMin)}
                     {s.vientoNudos != null ? ` · ${s.vientoNudos}kt` : ''}
+                    {s.notas ? ' · 📝' : ''}
                   </div>
                 </div>
+                <IconChevronRight />
                 <button
                   className="press"
-                  onClick={() => onEliminar(s.id)}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onEliminar(s.id);
+                  }}
                   style={{ background: 'none', border: 'none', padding: 4, flexShrink: 0 }}
                   aria-label="Eliminar sesión"
                 >

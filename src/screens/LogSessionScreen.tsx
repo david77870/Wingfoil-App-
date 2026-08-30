@@ -17,16 +17,17 @@ interface Props {
     calificacion: number;
     vientoNudos: number | null;
     vientoDireccion: string | null;
+    notas: string;
   }) => void;
   onGuardarSpot: (spot: Spot) => void;
 }
 
 export default function LogSessionScreen({ spot, condicion, onCancelar, onGuardar, onGuardarSpot }: Props) {
   const [fechaHora, setFechaHora] = useState(inputDatetimeLocalAhora());
-  const [mostrarFecha, setMostrarFecha] = useState(false);
   const [duracionMin, setDuracionMin] = useState(80);
   const [equipoSeleccionado, setEquipoSeleccionado] = useState<string[]>(['Ala 5m']);
   const [calificacion, setCalificacion] = useState(3);
+  const [notas, setNotas] = useState('');
 
   const [mostrarSpot, setMostrarSpot] = useState(false);
   const [spotNombre, setSpotNombre] = useState(spot.nombre);
@@ -76,6 +77,7 @@ export default function LogSessionScreen({ spot, condicion, onCancelar, onGuarda
       duracionMin,
       equipo: equipoSeleccionado,
       calificacion,
+      notas: notas.trim(),
       ...viento,
     });
   }
@@ -210,8 +212,8 @@ export default function LogSessionScreen({ spot, condicion, onCancelar, onGuarda
 
         <div
           className="rise press"
-          onClick={() => setMostrarFecha((v) => !v)}
           style={{
+            position: 'relative',
             background: '#ffffff',
             border: '1px solid var(--border)',
             borderRadius: 14,
@@ -232,22 +234,21 @@ export default function LogSessionScreen({ spot, condicion, onCancelar, onGuarda
             </div>
           </div>
           <IconChevronRight />
-        </div>
-        {mostrarFecha && (
           <input
             type="datetime-local"
             value={fechaHora}
             onChange={(e) => setFechaHora(e.target.value)}
             style={{
-              border: '1px solid var(--border)',
-              borderRadius: 12,
-              padding: '10px 14px',
-              fontSize: 14,
-              color: 'var(--ink)',
-              background: '#ffffff',
+              position: 'absolute',
+              inset: 0,
+              width: '100%',
+              height: '100%',
+              opacity: 0,
+              border: 'none',
+              cursor: 'pointer',
             }}
           />
-        )}
+        </div>
 
         <div className="rise" style={{ background: '#ffffff', border: '1px solid var(--border)', borderRadius: 14, padding: '14px 16px', animationDelay: '120ms' }}>
           <div style={{ fontSize: 10, color: 'var(--muted)', textTransform: 'uppercase', letterSpacing: '.3px', marginBottom: 10 }}>
@@ -393,6 +394,30 @@ export default function LogSessionScreen({ spot, condicion, onCancelar, onGuarda
               </button>
             ))}
           </div>
+        </div>
+
+        <div className="rise" style={{ background: '#ffffff', border: '1px solid var(--border)', borderRadius: 14, padding: '14px 16px', animationDelay: '270ms' }}>
+          <div style={{ fontSize: 10, color: 'var(--muted)', textTransform: 'uppercase', letterSpacing: '.3px', marginBottom: 10 }}>
+            Notas (opcional)
+          </div>
+          <textarea
+            value={notas}
+            onChange={(e) => setNotas(e.target.value)}
+            placeholder="¿Cómo estuvo el agua, la racha, algo para recordar la próxima vez?"
+            rows={3}
+            style={{
+              width: '100%',
+              minWidth: 0,
+              boxSizing: 'border-box',
+              border: '1px solid var(--border)',
+              borderRadius: 10,
+              padding: '10px 12px',
+              fontSize: 13,
+              color: 'var(--ink)',
+              fontFamily: 'inherit',
+              resize: 'vertical',
+            }}
+          />
         </div>
         <div style={{ height: 12 }} />
       </div>

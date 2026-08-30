@@ -43,6 +43,10 @@ export function eliminarSesion(id: string): void {
   localStorage.setItem(KEY_SESIONES, JSON.stringify(actuales));
 }
 
+export function borrarTodasLasSesiones(): void {
+  localStorage.removeItem(KEY_SESIONES);
+}
+
 export function obtenerSpot(): Spot {
   try {
     const raw = localStorage.getItem(KEY_SPOT);
