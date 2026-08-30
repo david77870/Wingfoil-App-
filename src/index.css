@@ -29,7 +29,7 @@ body {
 }
 
 body {
-  font-family: 'Work Sans', system-ui, sans-serif;
+  font-family: 'Manrope', system-ui, sans-serif;
   background: #dde9e7;
   color: var(--ink);
   -webkit-tap-highlight-color: transparent;
@@ -46,7 +46,7 @@ button {
 }
 
 .disp {
-  font-family: 'Space Grotesk', system-ui, sans-serif;
+  font-family: 'Outfit', system-ui, sans-serif;
 }
 
 .app-shell {
@@ -150,7 +150,7 @@ button {
 }
 
 input[type='datetime-local'] {
-  font-family: 'Work Sans', system-ui, sans-serif;
+  font-family: 'Manrope', system-ui, sans-serif;
 }
 
 .wind-hero {
