@@ -179,17 +179,47 @@ function tendenciaViento(horas: PronosticoHora[]): { texto: string; simbolo: str
 }
 
 function BrujulaViento({ grados, activo, size = 66 }: { grados: number; activo: boolean; size?: number }) {
+  const marcas = Array.from({ length: 8 }, (_, i) => i * 45);
   return (
     <svg width={size} height={size} viewBox="0 0 66 66">
-      <circle cx="33" cy="33" r="29" fill="none" stroke="rgba(255,255,255,0.14)" strokeWidth="1.5" />
-      <circle cx="33" cy="33" r="2" fill="rgba(255,255,255,0.3)" />
-      <text x="33" y="10" textAnchor="middle" fontSize="8" fontWeight="700" fill="rgba(255,255,255,0.45)">
+      <defs>
+        <filter id="needleGlow" x="-80%" y="-80%" width="260%" height="260%">
+          <feGaussianBlur stdDeviation="2.4" />
+        </filter>
+      </defs>
+      <circle cx="33" cy="33" r="30" fill="none" stroke="rgba(255,255,255,0.08)" strokeWidth="6" />
+      <circle cx="33" cy="33" r="30" fill="none" stroke="rgba(255,255,255,0.28)" strokeWidth="1.6" />
+      {marcas.map((deg) => {
+        const cardinal = deg % 90 === 0;
+        const rad = (deg * Math.PI) / 180;
+        const outer = 30;
+        const inner = cardinal ? 23.5 : 26.5;
+        const x1 = 33 + outer * Math.sin(rad);
+        const y1 = 33 - outer * Math.cos(rad);
+        const x2 = 33 + inner * Math.sin(rad);
+        const y2 = 33 - inner * Math.cos(rad);
+        return (
+          <line
+            key={deg}
+            x1={x1}
+            y1={y1}
+            x2={x2}
+            y2={y2}
+            stroke="rgba(255,255,255,0.4)"
+            strokeWidth={cardinal ? 1.6 : 1}
+            strokeLinecap="round"
+          />
+        );
+      })}
+      <text x="33" y="9" textAnchor="middle" fontSize="8.5" fontWeight="700" fill="rgba(255,255,255,0.6)">
         N
       </text>
+      <circle cx="33" cy="33" r="2.8" fill="#8fe6ea" />
       {activo && (
         <g transform={`rotate(${grados} 33 33)`} style={{ transition: 'transform 600ms cubic-bezier(0.23, 1, 0.32, 1)' }}>
-          <line x1="33" y1="33" x2="33" y2="16" stroke="#287fe0" strokeWidth="3" strokeLinecap="round" />
-          <polygon points="33,10 28,20 38,20" fill="#287fe0" />
+          <line x1="33" y1="33" x2="33" y2="13" stroke="#8fe6ea" strokeWidth="6" strokeLinecap="round" opacity="0.55" filter="url(#needleGlow)" />
+          <line x1="33" y1="33" x2="33" y2="13" stroke="#8fe6ea" strokeWidth="3" strokeLinecap="round" />
+          <polygon points="33,8 27,20 39,20" fill="#8fe6ea" />
         </g>
       )}
     </svg>
@@ -255,7 +285,7 @@ export default function WindScreen({ spot, condicion, pronostico, pronosticoSema
         onRightIconClick={onAjustes}
       />
 
-      <div className="rise" style={{ padding: '0 20px', animationDelay: '60ms' }}>
+      <div className="rise" style={{ padding: '0 20px', animationDelay: '60ms', flex: '1 1 auto' }}>
         <div
           className={`wind-hero wind-hero--${condicion ? categorizarViento(condicion.vientoNudos).variante : 'ideal'}`}
           style={{
@@ -263,6 +293,7 @@ export default function WindScreen({ spot, condicion, pronostico, pronosticoSema
             padding: '20px 22px',
             position: 'relative',
             overflow: 'hidden',
+            height: '100%',
           }}
         >
           <WindCurrents />
@@ -272,49 +303,51 @@ export default function WindScreen({ spot, condicion, pronostico, pronosticoSema
           </div>
 
           {error && !condicion ? (
-            <div className="wind-hero-content">
+            <div className="wind-hero-content" style={{ height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
               <div style={{ fontSize: 15, color: '#ffffff', fontWeight: 600 }}>Sin datos de viento</div>
               <div style={{ fontSize: 12, color: 'var(--muted-2)', marginTop: 6 }}>
                 No pudimos conectar con el servicio de pronóstico. Revisá tu conexión.
               </div>
             </div>
           ) : (
-            <div className="wind-hero-content">
+            <div className="wind-hero-content" style={{ height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
               <div style={{ position: 'absolute', right: 14, top: 14 }}>
-                <BrujulaViento grados={condicion?.direccionGrados ?? 0} activo={!!condicion} size={54} />
+                <BrujulaViento grados={condicion?.direccionGrados ?? 0} activo={!!condicion} size={62} />
               </div>
-              <div style={{ display: 'flex', alignItems: 'baseline', gap: 8 }}>
-                <div className="disp" style={{ fontSize: 58, fontWeight: 700, color: '#ffffff', lineHeight: 1, letterSpacing: '-1px' }}>
-                  {condicion ? condicion.vientoNudos : cargando ? '–' : '–'}
+              <div>
+                <div style={{ display: 'flex', alignItems: 'baseline', gap: 8 }}>
+                  <div className="disp" style={{ fontSize: 58, fontWeight: 700, color: '#ffffff', lineHeight: 1, letterSpacing: '-1px' }}>
+                    {condicion ? condicion.vientoNudos : cargando ? '–' : '–'}
+                  </div>
+                  <div style={{ fontSize: 16, color: '#8fe6ea', fontWeight: 600 }}>
+                    kt {condicion?.direccionTexto ?? ''}
+                  </div>
                 </div>
-                <div style={{ fontSize: 16, color: '#8fe6ea', fontWeight: 600 }}>
-                  kt {condicion?.direccionTexto ?? ''}
-                </div>
-              </div>
 
-              {condicion &&
-                (() => {
-                  const cat = categorizarViento(condicion.vientoNudos);
-                  return (
-                    <div
-                      style={{
-                        display: 'inline-flex',
-                        alignItems: 'center',
-                        gap: 6,
-                        marginTop: 8,
-                        padding: '4px 10px',
-                        borderRadius: 20,
-                        background: cat.bg,
-                      }}
-                    >
-                      <div style={{ width: 6, height: 6, borderRadius: '50%', background: cat.color }} />
-                      <div style={{ fontSize: 11, fontWeight: 600, color: cat.color }}>{cat.label}</div>
-                    </div>
-                  );
-                })()}
+                {condicion &&
+                  (() => {
+                    const cat = categorizarViento(condicion.vientoNudos);
+                    return (
+                      <div
+                        style={{
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: 6,
+                          marginTop: 8,
+                          padding: '4px 10px',
+                          borderRadius: 20,
+                          background: cat.bg,
+                        }}
+                      >
+                        <div style={{ width: 6, height: 6, borderRadius: '50%', background: cat.color }} />
+                        <div style={{ fontSize: 11, fontWeight: 600, color: cat.color }}>{cat.label}</div>
+                      </div>
+                    );
+                  })()}
+              </div>
 
               {condicion && (
-                <div style={{ display: 'flex', gap: 14, marginTop: 12, paddingTop: 12, borderTop: '1px solid rgba(255,255,255,0.12)' }}>
+                <div style={{ display: 'flex', gap: 14, paddingTop: 12, borderTop: '1px solid rgba(255,255,255,0.12)' }}>
                   <HeroStat icon={<IconRachaMini />} label="Racha" value={`${condicion.rachaNudos} kt`} />
                   <HeroStat icon={<IconAireMini />} label="Aire" value={`${condicion.tempAireC}°`} />
                   <HeroStat
@@ -329,7 +362,7 @@ export default function WindScreen({ spot, condicion, pronostico, pronosticoSema
         </div>
       </div>
 
-      <div style={{ padding: '16px 20px 0 20px', flex: 1, overflowY: 'auto' }}>
+      <div style={{ padding: '16px 20px 0 20px', flex: '0 1 auto', overflowY: 'auto' }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10 }}>
           <div style={{ fontSize: 13, fontWeight: 600 }}>Pronóstico de hoy</div>
           {pronostico &&
