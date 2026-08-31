@@ -144,7 +144,6 @@ export default function App() {
             pronosticoSemana={pronosticoSemana}
             cargando={cargando}
             error={error}
-            sesiones={sesiones}
             onNuevaSesion={() => {
               abrirOverlay();
               setMostrarNuevaSesion(true);

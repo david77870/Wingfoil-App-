@@ -157,38 +157,53 @@ input[type='datetime-local'] {
 .wind-hero {
   background-size: 220% 220%, 220% 220%, 160% 160%, 100% 100%;
   animation: corrienteDrift 13s ease-in-out infinite;
+  --corriente-opacity: 0.5;
+  --corriente-glow-opacity: 0.65;
+  --particula-opacity: 0.45;
 }
 
 .wind-hero--calma {
   background:
-    radial-gradient(120% 90% at 14% 10%, rgba(127, 151, 179, 0.3), transparent 58%),
-    radial-gradient(100% 80% at 86% 30%, rgba(40, 127, 224, 0.22), transparent 62%),
-    radial-gradient(140% 100% at 50% 105%, rgba(8, 15, 26, 0.92), transparent 70%),
-    linear-gradient(160deg, #17293d 0%, #1c3652 55%, #223f5d 100%);
+    radial-gradient(120% 90% at 14% 10%, rgba(90, 130, 160, 0.22), transparent 58%),
+    radial-gradient(100% 80% at 86% 30%, rgba(30, 100, 150, 0.16), transparent 62%),
+    radial-gradient(140% 100% at 50% 105%, rgba(4, 9, 16, 0.94), transparent 70%),
+    linear-gradient(160deg, #0a1520 0%, #0f2231 55%, #12293a 100%);
+  --corriente-opacity: 0.32;
+  --corriente-glow-opacity: 0.4;
+  --particula-opacity: 0.28;
 }
 
 .wind-hero--ideal {
   background:
-    radial-gradient(120% 90% at 12% 8%, rgba(22, 139, 150, 0.4), transparent 56%),
-    radial-gradient(100% 80% at 88% 28%, rgba(40, 127, 224, 0.4), transparent 60%),
-    radial-gradient(140% 100% at 50% 105%, rgba(7, 15, 25, 0.94), transparent 70%),
-    linear-gradient(160deg, #0d2233 0%, #123a55 55%, #135a65 100%);
+    radial-gradient(120% 90% at 12% 8%, rgba(22, 139, 150, 0.32), transparent 56%),
+    radial-gradient(100% 80% at 88% 28%, rgba(40, 127, 224, 0.3), transparent 60%),
+    radial-gradient(140% 100% at 50% 105%, rgba(3, 8, 14, 0.95), transparent 70%),
+    linear-gradient(160deg, #061620 0%, #0b2c3c 55%, #0d3a42 100%);
+  --corriente-opacity: 0.6;
+  --corriente-glow-opacity: 0.7;
+  --particula-opacity: 0.5;
 }
 
 .wind-hero--fuerte {
   background:
-    radial-gradient(120% 90% at 12% 8%, rgba(40, 127, 224, 0.48), transparent 56%),
-    radial-gradient(100% 80% at 88% 28%, rgba(18, 59, 103, 0.55), transparent 60%),
-    radial-gradient(140% 100% at 50% 105%, rgba(5, 11, 20, 0.95), transparent 70%),
-    linear-gradient(160deg, #0a1c2f 0%, #123b67 55%, #1c4f86 100%);
+    radial-gradient(120% 90% at 12% 8%, rgba(40, 160, 200, 0.4), transparent 56%),
+    radial-gradient(100% 80% at 88% 28%, rgba(18, 59, 103, 0.5), transparent 60%),
+    radial-gradient(140% 100% at 50% 105%, rgba(2, 6, 12, 0.96), transparent 70%),
+    linear-gradient(160deg, #051220 0%, #0d2b45 55%, #114a5e 100%);
+  --corriente-opacity: 0.78;
+  --corriente-glow-opacity: 0.9;
+  --particula-opacity: 0.65;
 }
 
 .wind-hero--epico {
   background:
-    radial-gradient(120% 90% at 12% 8%, rgba(224, 138, 61, 0.3), transparent 56%),
-    radial-gradient(100% 80% at 88% 28%, rgba(40, 127, 224, 0.4), transparent 60%),
-    radial-gradient(140% 100% at 50% 105%, rgba(10, 8, 8, 0.94), transparent 70%),
-    linear-gradient(160deg, #1c1a2a 0%, #123b67 55%, #17436b 100%);
+    radial-gradient(120% 90% at 12% 8%, rgba(224, 158, 61, 0.22), transparent 56%),
+    radial-gradient(100% 80% at 88% 28%, rgba(45, 180, 210, 0.4), transparent 60%),
+    radial-gradient(140% 100% at 50% 105%, rgba(6, 5, 8, 0.95), transparent 70%),
+    linear-gradient(160deg, #120f1a 0%, #0d2b45 55%, #135a65 100%);
+  --corriente-opacity: 0.92;
+  --corriente-glow-opacity: 1;
+  --particula-opacity: 0.8;
 }
 
 @keyframes corrienteDrift {
@@ -203,22 +218,88 @@ input[type='datetime-local'] {
   }
 }
 
+.wind-hero-currents {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.wind-hero-currents path {
+  fill: none;
+  stroke-linecap: round;
+}
+
+.wind-hero-currents .corriente {
+  opacity: var(--corriente-opacity);
+}
+
+.wind-hero-currents .corriente--glow {
+  filter: blur(3px);
+  opacity: var(--corriente-glow-opacity);
+}
+
+.wind-hero-particulas {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  opacity: var(--particula-opacity);
+}
+
+.wind-hero-particulas circle {
+  fill: #bdf0f2;
+  animation: derivaParticula 14s ease-in-out infinite;
+}
+
+@keyframes derivaParticula {
+  0%,
+  100% {
+    transform: translate(0, 0);
+    opacity: 0.25;
+  }
+  50% {
+    transform: translate(-10px, -6px);
+    opacity: 0.85;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .wind-hero {
     animation: none;
+  }
+  .wind-hero-particulas circle,
+  .wind-hero-foil {
+    animation: none !important;
   }
 }
 
 .wind-hero-foil {
   position: absolute;
   pointer-events: none;
-  opacity: 0.07;
+  opacity: 0.16;
   z-index: 0;
+  animation: flotarFoil 12s ease-in-out infinite;
 }
 
 .wind-hero-content {
   position: relative;
   z-index: 1;
+}
+
+@keyframes flotarFoil {
+  0% {
+    transform: translate(0, 0) rotate(18deg);
+    opacity: 0.13;
+  }
+  50% {
+    transform: translate(-6px, 8px) rotate(21deg);
+    opacity: 0.19;
+  }
+  100% {
+    transform: translate(0, 0) rotate(18deg);
+    opacity: 0.13;
+  }
 }
 
 .no-scrollbar {

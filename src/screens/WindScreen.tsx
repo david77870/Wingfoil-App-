@@ -1,4 +1,5 @@
-import type { CondicionActual, PronosticoDia, PronosticoDiario, PronosticoHora, Sesion, Spot } from '../types';
+import type { ReactNode } from 'react';
+import type { CondicionActual, PronosticoDia, PronosticoDiario, PronosticoHora, Spot } from '../types';
 import ScreenHeader from '../components/ScreenHeader';
 import { IconPlus, IconSettings } from '../components/icons';
 import { formatearFechaHoy } from '../lib/format';
@@ -11,7 +12,6 @@ interface Props {
   pronosticoSemana: PronosticoDiario[];
   cargando: boolean;
   error: boolean;
-  sesiones: Sesion[];
   onNuevaSesion: () => void;
   onAjustes: () => void;
 }
@@ -23,17 +23,121 @@ function categorizarViento(nudos: number): { label: string; color: string; bg: s
   return { label: 'Día épico', color: '#e08a3d', bg: 'rgba(224,138,61,0.22)', variante: 'epico' };
 }
 
+// Silueta abstracta de hydrofoil visto desde arriba (ala frontal + mástil +
+// estabilizador trasero), pensada para vivir como textura de fondo dentro
+// del hero, no como ilustración protagonista.
 function HydrofoilMark({ size = 300 }: { size?: number }) {
+  const ala = 'M30,112 C88,72 128,96 150,100 C172,96 212,72 270,112 C212,124 172,110 150,108 C128,110 88,124 30,112 Z';
+  const estabilizador = 'M112,228 C130,214 148,221 150,223 C152,221 170,214 188,228 C170,235 152,228 150,227 C148,228 130,235 112,228 Z';
   return (
     <svg width={size} height={size} viewBox="0 0 300 300" fill="none">
-      <path
-        d="M150,26 C186,26 200,64 200,150 C200,236 186,274 150,274 C114,274 100,236 100,150 C100,64 114,26 150,26 Z"
-        stroke="#ffffff"
-        strokeWidth="1.4"
-      />
-      <line x1="150" y1="150" x2="150" y2="238" stroke="#ffffff" strokeWidth="1.4" />
-      <line x1="107" y1="196" x2="193" y2="196" stroke="#ffffff" strokeWidth="1.4" />
-      <line x1="128" y1="232" x2="172" y2="232" stroke="#ffffff" strokeWidth="1.4" />
+      <defs>
+        <filter id="foilGlow" x="-60%" y="-60%" width="220%" height="220%">
+          <feGaussianBlur stdDeviation="5" />
+        </filter>
+      </defs>
+      <g stroke="#8fe6ea" strokeWidth="6" opacity="0.35" filter="url(#foilGlow)">
+        <path d={ala} />
+        <line x1="150" y1="106" x2="150" y2="224" strokeWidth="5" />
+        <path d={estabilizador} />
+      </g>
+      <g stroke="#eafcfd" strokeWidth="1.3">
+        <path d={ala} />
+        <line x1="150" y1="106" x2="150" y2="224" />
+        <path d={estabilizador} />
+      </g>
+    </svg>
+  );
+}
+
+// Cada corriente es un trazo continuo (sin guiones) coloreado por un
+// gradiente que se desliza sobre él: así el brillo "viaja" por la curva y
+// se apaga de forma gradual en las puntas, en vez de ir cortado en
+// segmentos parejos (el efecto "hormiguitas en fila" de un dasharray).
+function prefiereMovimientoReducido(): boolean {
+  return typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+}
+
+function WindCurrents() {
+  const movimientoReducido = prefiereMovimientoReducido();
+  const corrientes: {
+    d: string;
+    width: number;
+    periodo: number;
+    duracion: string;
+    reverso?: boolean;
+    perfil: 'estela' | 'destello';
+  }[] = [
+    { d: 'M-20,178 C80,148 140,208 240,168 C300,144 340,158 420,120', width: 1.5, periodo: 150, duracion: '12s', perfil: 'estela' },
+    { d: 'M-20,58 C60,90 120,38 200,68 C280,98 340,48 420,78', width: 1.1, periodo: 110, duracion: '16s', perfil: 'destello' },
+    { d: 'M-20,120 C100,100 160,150 260,110 C320,90 360,128 420,100', width: 1.9, periodo: 170, duracion: '14s', perfil: 'estela' },
+    { d: 'M-20,26 C90,6 150,46 230,18 C300,-6 360,26 420,8', width: 0.9, periodo: 90, duracion: '19s', perfil: 'destello' },
+    { d: 'M-20,208 C70,228 150,190 230,214 C300,234 350,204 420,224', width: 1, periodo: 130, duracion: '17s', reverso: true, perfil: 'estela' },
+  ];
+
+  return (
+    <svg className="wind-hero-currents" viewBox="0 0 400 240" preserveAspectRatio="none">
+      <defs>
+        {corrientes.map((c, i) => {
+          const stops =
+            c.perfil === 'estela' ? (
+              <>
+                <stop offset="0%" stopColor="#eafcfd" stopOpacity="0" />
+                <stop offset="18%" stopColor="#8fe6ea" stopOpacity="0.5" />
+                <stop offset="46%" stopColor="#eafcfd" stopOpacity="1" />
+                <stop offset="70%" stopColor="#8fe6ea" stopOpacity="0.4" />
+                <stop offset="100%" stopColor="#eafcfd" stopOpacity="0" />
+              </>
+            ) : (
+              <>
+                <stop offset="0%" stopColor="#eafcfd" stopOpacity="0" />
+                <stop offset="42%" stopColor="#eafcfd" stopOpacity="0" />
+                <stop offset="52%" stopColor="#eafcfd" stopOpacity="1" />
+                <stop offset="62%" stopColor="#eafcfd" stopOpacity="0" />
+                <stop offset="100%" stopColor="#eafcfd" stopOpacity="0" />
+              </>
+            );
+          return (
+            <linearGradient key={i} id={`flow-${i}`} gradientUnits="userSpaceOnUse" x1="0" y1="0" x2={c.periodo} y2="0" spreadMethod="repeat">
+              {stops}
+              {!movimientoReducido && (
+                <animateTransform
+                  attributeName="gradientTransform"
+                  type="translate"
+                  from={c.reverso ? `${c.periodo} 0` : '0 0'}
+                  to={c.reverso ? '0 0' : `${c.periodo} 0`}
+                  dur={c.duracion}
+                  repeatCount="indefinite"
+                />
+              )}
+            </linearGradient>
+          );
+        })}
+      </defs>
+      {corrientes.map((c, i) => (
+        <path key={`glow-${i}`} className="corriente corriente--glow" d={c.d} stroke={`url(#flow-${i})`} strokeWidth={c.width + 2.2} />
+      ))}
+      {corrientes.map((c, i) => (
+        <path key={`line-${i}`} className="corriente" d={c.d} stroke={`url(#flow-${i})`} strokeWidth={c.width} />
+      ))}
+    </svg>
+  );
+}
+
+function WindParticles() {
+  const puntos = [
+    { x: 60, y: 40, r: 1.6, delay: '0s' },
+    { x: 140, y: 90, r: 1.1, delay: '-3s' },
+    { x: 220, y: 30, r: 1.4, delay: '-6s' },
+    { x: 300, y: 70, r: 1, delay: '-9s' },
+    { x: 90, y: 130, r: 1.3, delay: '-2s' },
+    { x: 260, y: 130, r: 1.6, delay: '-5s' },
+  ];
+  return (
+    <svg className="wind-hero-particulas" viewBox="0 0 400 240" preserveAspectRatio="none">
+      {puntos.map((p, i) => (
+        <circle key={i} cx={p.x} cy={p.y} r={p.r} style={{ animationDelay: p.delay }} />
+      ))}
     </svg>
   );
 }
@@ -74,9 +178,9 @@ function tendenciaViento(horas: PronosticoHora[]): { texto: string; simbolo: str
   return { texto: 'Estable', simbolo: '→', color: 'var(--muted)' };
 }
 
-function BrujulaViento({ grados, activo }: { grados: number; activo: boolean }) {
+function BrujulaViento({ grados, activo, size = 66 }: { grados: number; activo: boolean; size?: number }) {
   return (
-    <svg width="66" height="66" viewBox="0 0 66 66">
+    <svg width={size} height={size} viewBox="0 0 66 66">
       <circle cx="33" cy="33" r="29" fill="none" stroke="rgba(255,255,255,0.14)" strokeWidth="1.5" />
       <circle cx="33" cy="33" r="2" fill="rgba(255,255,255,0.3)" />
       <text x="33" y="10" textAnchor="middle" fontSize="8" fontWeight="700" fill="rgba(255,255,255,0.45)">
@@ -92,25 +196,49 @@ function BrujulaViento({ grados, activo }: { grados: number; activo: boolean }) 
   );
 }
 
-function calcularRachaDias(sesiones: Sesion[]): number {
-  if (sesiones.length === 0) return 0;
-  const dias = new Set(sesiones.map((s) => new Date(s.fechaHoraISO).toDateString()));
-  let racha = 0;
-  const cursor = new Date();
-  cursor.setHours(0, 0, 0, 0);
-  // si no hubo sesión hoy, el día "actual" para contar racha es ayer
-  if (!dias.has(cursor.toDateString())) {
-    cursor.setDate(cursor.getDate() - 1);
-  }
-  while (dias.has(cursor.toDateString())) {
-    racha++;
-    cursor.setDate(cursor.getDate() - 1);
-  }
-  return racha;
+function IconRachaMini() {
+  return (
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#8fe6ea" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M3 12h13a3 3 0 1 0-2.5-4.7" />
+      <path d="M3 8h9" />
+      <path d="M3 16h16a2.5 2.5 0 1 1-2 4" />
+    </svg>
+  );
 }
 
-export default function WindScreen({ spot, condicion, pronostico, pronosticoSemana, cargando, error, sesiones, onNuevaSesion, onAjustes }: Props) {
-  const racha = calcularRachaDias(sesiones);
+function IconAireMini() {
+  return (
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#8fe6ea" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M14 14.76V4a2 2 0 1 0-4 0v10.76a4 4 0 1 0 4 0Z" />
+    </svg>
+  );
+}
+
+function IconSensacionMini() {
+  return (
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#8fe6ea" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M3 15a4 4 0 0 1 4-4 4 4 0 0 1 4 4" />
+      <path d="M13 11a4 4 0 0 1 4-4 4 4 0 0 1 4 4" />
+      <path d="M3 19h18" />
+    </svg>
+  );
+}
+
+function HeroStat({ icon, label, value }: { icon: ReactNode; label: string; value: string }) {
+  return (
+    <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 4 }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
+        {icon}
+        <div style={{ fontSize: 9.5, fontWeight: 600, letterSpacing: '.4px', textTransform: 'uppercase', color: 'var(--muted-2)' }}>{label}</div>
+      </div>
+      <div className="disp" style={{ fontSize: 15, fontWeight: 700, color: '#ffffff' }}>
+        {value}
+      </div>
+    </div>
+  );
+}
+
+export default function WindScreen({ spot, condicion, pronostico, pronosticoSemana, cargando, error, onNuevaSesion, onAjustes }: Props) {
   const maxViento = pronostico?.horas.length
     ? Math.max(...pronostico.horas.map((h) => h.vientoNudos), 1)
     : 1;
@@ -132,12 +260,14 @@ export default function WindScreen({ spot, condicion, pronostico, pronosticoSema
           className={`wind-hero wind-hero--${condicion ? categorizarViento(condicion.vientoNudos).variante : 'ideal'}`}
           style={{
             borderRadius: 20,
-            padding: '26px 24px',
+            padding: '20px 22px',
             position: 'relative',
             overflow: 'hidden',
           }}
         >
-          <div className="wind-hero-foil" style={{ right: -70, bottom: -90, transform: 'rotate(18deg)' }}>
+          <WindCurrents />
+          <WindParticles />
+          <div className="wind-hero-foil" style={{ right: -70, bottom: -90 }}>
             <HydrofoilMark size={280} />
           </div>
 
@@ -150,14 +280,14 @@ export default function WindScreen({ spot, condicion, pronostico, pronosticoSema
             </div>
           ) : (
             <div className="wind-hero-content">
-              <div style={{ position: 'absolute', right: 18, top: 18 }}>
-                <BrujulaViento grados={condicion?.direccionGrados ?? 0} activo={!!condicion} />
+              <div style={{ position: 'absolute', right: 14, top: 14 }}>
+                <BrujulaViento grados={condicion?.direccionGrados ?? 0} activo={!!condicion} size={54} />
               </div>
               <div style={{ display: 'flex', alignItems: 'baseline', gap: 8 }}>
-                <div className="disp" style={{ fontSize: 68, fontWeight: 700, color: '#ffffff', lineHeight: 1, letterSpacing: '-1px' }}>
+                <div className="disp" style={{ fontSize: 58, fontWeight: 700, color: '#ffffff', lineHeight: 1, letterSpacing: '-1px' }}>
                   {condicion ? condicion.vientoNudos : cargando ? '–' : '–'}
                 </div>
-                <div style={{ fontSize: 16, color: '#7fc2ff', fontWeight: 600 }}>
+                <div style={{ fontSize: 16, color: '#8fe6ea', fontWeight: 600 }}>
                   kt {condicion?.direccionTexto ?? ''}
                 </div>
               </div>
@@ -171,7 +301,7 @@ export default function WindScreen({ spot, condicion, pronostico, pronosticoSema
                         display: 'inline-flex',
                         alignItems: 'center',
                         gap: 6,
-                        marginTop: 10,
+                        marginTop: 8,
                         padding: '4px 10px',
                         borderRadius: 20,
                         background: cat.bg,
@@ -183,21 +313,23 @@ export default function WindScreen({ spot, condicion, pronostico, pronosticoSema
                   );
                 })()}
 
-              <div style={{ fontSize: 13, color: 'var(--muted-2)', marginTop: 10 }}>
-                {condicion ? `Racha ${condicion.rachaNudos}kt · ${condicion.tempAireC}° de aire` : cargando ? 'Cargando pronóstico…' : 'Sin datos por ahora'}
-              </div>
+              {condicion && (
+                <div style={{ display: 'flex', gap: 14, marginTop: 12, paddingTop: 12, borderTop: '1px solid rgba(255,255,255,0.12)' }}>
+                  <HeroStat icon={<IconRachaMini />} label="Racha" value={`${condicion.rachaNudos} kt`} />
+                  <HeroStat icon={<IconAireMini />} label="Aire" value={`${condicion.tempAireC}°`} />
+                  <HeroStat
+                    icon={<IconSensacionMini />}
+                    label="Sensación"
+                    value={condicion.sensacionTermicaC != null ? `${condicion.sensacionTermicaC}°` : '—'}
+                  />
+                </div>
+              )}
             </div>
           )}
         </div>
       </div>
 
-      <div style={{ display: 'flex', gap: 10, padding: '14px 20px 0 20px' }}>
-        <StatCard label="Aire" value={condicion ? `${condicion.tempAireC}°` : '—'} delay="120ms" />
-        <StatCard label="Sesiones" value={String(sesiones.length)} delay="150ms" />
-        <StatCard label="Racha" value={racha > 0 ? `${racha}d` : '—'} delay="180ms" accent={racha > 0} />
-      </div>
-
-      <div style={{ padding: '22px 20px 0 20px', flex: 1, overflowY: 'auto' }}>
+      <div style={{ padding: '16px 20px 0 20px', flex: 1, overflowY: 'auto' }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10 }}>
           <div style={{ fontSize: 13, fontWeight: 600 }}>Pronóstico de hoy</div>
           {pronostico &&
@@ -316,27 +448,6 @@ export default function WindScreen({ spot, condicion, pronostico, pronosticoSema
           <IconPlus />
           Registrar sesión
         </button>
-      </div>
-    </div>
-  );
-}
-
-function StatCard({ label, value, delay, accent }: { label: string; value: string; delay: string; accent?: boolean }) {
-  return (
-    <div
-      className="rise"
-      style={{
-        flex: 1,
-        background: '#ffffff',
-        border: '1px solid var(--border)',
-        borderRadius: 14,
-        padding: 14,
-        animationDelay: delay,
-      }}
-    >
-      <div style={{ fontSize: 10, color: 'var(--muted)', letterSpacing: '.3px', textTransform: 'uppercase' }}>{label}</div>
-      <div className="disp" style={{ fontSize: 20, fontWeight: 600, marginTop: 4, color: accent ? 'var(--accent)' : 'var(--ink)' }}>
-        {value}
       </div>
     </div>
   );

@@ -16,6 +16,7 @@ interface OpenMeteoResponse {
   current?: {
     time?: string;
     temperature_2m?: number;
+    apparent_temperature?: number;
     wind_speed_10m?: number;
     wind_direction_10m?: number;
     wind_gusts_10m?: number;
@@ -65,7 +66,7 @@ async function fetchForecast(lat: number, lon: number): Promise<OpenMeteoRespons
     latitude: String(lat),
     longitude: String(lon),
     hourly: 'wind_speed_10m,wind_direction_10m,wind_gusts_10m,temperature_2m',
-    current: 'temperature_2m,wind_speed_10m,wind_direction_10m,wind_gusts_10m',
+    current: 'temperature_2m,apparent_temperature,wind_speed_10m,wind_direction_10m,wind_gusts_10m',
     daily: 'wind_speed_10m_max,wind_gusts_10m_max,wind_direction_10m_dominant,temperature_2m_max,temperature_2m_min,weather_code',
     wind_speed_unit: 'kn',
     timezone: 'auto',
@@ -87,6 +88,7 @@ export async function obtenerCondicionActual(lat: number, lon: number): Promise<
     return {
       tempAguaAprox: null,
       tempAireC: Math.round(c.temperature_2m ?? 0),
+      sensacionTermicaC: c.apparent_temperature != null ? Math.round(c.apparent_temperature) : null,
       vientoNudos: Math.round(c.wind_speed_10m),
       rachaNudos: Math.round(c.wind_gusts_10m ?? c.wind_speed_10m),
       direccionGrados,

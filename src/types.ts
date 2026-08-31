@@ -26,6 +26,7 @@ export interface Spot {
 export interface CondicionActual {
   tempAguaAprox: number | null;
   tempAireC: number;
+  sensacionTermicaC: number | null;
   vientoNudos: number;
   rachaNudos: number;
   direccionGrados: number;
