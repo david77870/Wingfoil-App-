@@ -52,12 +52,13 @@ button {
 .app-shell {
   width: 100%;
   max-width: 480px;
-  min-height: 100dvh;
+  height: 100dvh;
   background: var(--bg);
   color: var(--ink);
   position: relative;
   display: flex;
   flex-direction: column;
+  overflow: hidden;
 }
 
 @media (min-width: 481px) {
@@ -65,7 +66,7 @@ button {
     padding: 24px 0;
   }
   .app-shell {
-    min-height: min(844px, 100dvh);
+    height: min(844px, 100dvh);
     border-radius: 28px;
     box-shadow: 0 30px 60px -25px rgba(16, 35, 58, 0.35);
     overflow: hidden;

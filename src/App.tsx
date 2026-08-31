@@ -65,6 +65,27 @@ export default function App() {
     return () => clearTimeout(t);
   }, []);
 
+  // Las pantallas superpuestas (nueva sesión, detalle, ajustes) empujan una
+  // entrada al historial del navegador al abrirse, así el gesto de "volver"
+  // del sistema (o el botón atrás) las cierra en vez de salir de la app.
+  useEffect(() => {
+    function onPopState() {
+      setMostrarNuevaSesion(false);
+      setSesionDetalleId(null);
+      setMostrarAjustes(false);
+    }
+    window.addEventListener('popstate', onPopState);
+    return () => window.removeEventListener('popstate', onPopState);
+  }, []);
+
+  function abrirOverlay() {
+    window.history.pushState({ overlay: true }, '');
+  }
+
+  function cerrarOverlay() {
+    window.history.back();
+  }
+
   function handleGuardarSesion(datos: {
     fechaHoraISO: string;
     duracionMin: number;
@@ -88,8 +109,8 @@ export default function App() {
       notas: datos.notas || undefined,
     });
     setSesiones(obtenerSesiones());
-    setMostrarNuevaSesion(false);
     setTab('historial');
+    cerrarOverlay();
   }
 
   function handleEliminarSesion(id: string) {
@@ -124,26 +145,45 @@ export default function App() {
             cargando={cargando}
             error={error}
             sesiones={sesiones}
-            onNuevaSesion={() => setMostrarNuevaSesion(true)}
-            onAjustes={() => setMostrarAjustes(true)}
+            onNuevaSesion={() => {
+              abrirOverlay();
+              setMostrarNuevaSesion(true);
+            }}
+            onAjustes={() => {
+              abrirOverlay();
+              setMostrarAjustes(true);
+            }}
           />
         )}
         {tab === 'historial' && (
           <HistoryScreen
             sesiones={sesiones}
             onEliminar={handleEliminarSesion}
-            onVerSesion={setSesionDetalleId}
-            onAjustes={() => setMostrarAjustes(true)}
+            onVerSesion={(id) => {
+              abrirOverlay();
+              setSesionDetalleId(id);
+            }}
+            onAjustes={() => {
+              abrirOverlay();
+              setMostrarAjustes(true);
+            }}
           />
         )}
-        {tab === 'aprender' && <LearnScreen onAjustes={() => setMostrarAjustes(true)} />}
+        {tab === 'aprender' && (
+          <LearnScreen
+            onAjustes={() => {
+              abrirOverlay();
+              setMostrarAjustes(true);
+            }}
+          />
+        )}
 
         {mostrarNuevaSesion && (
           <div className="screen fade-in">
             <LogSessionScreen
               spot={spot}
               condicion={condicion}
-              onCancelar={() => setMostrarNuevaSesion(false)}
+              onCancelar={cerrarOverlay}
               onGuardar={handleGuardarSesion}
               onGuardarSpot={handleGuardarSpot}
             />
@@ -154,7 +194,7 @@ export default function App() {
           <div className="screen fade-in">
             <SessionDetailScreen
               sesion={sesionDetalle}
-              onCerrar={() => setSesionDetalleId(null)}
+              onCerrar={cerrarOverlay}
               onEliminar={handleEliminarSesion}
             />
           </div>
@@ -165,7 +205,7 @@ export default function App() {
             <SettingsScreen
               spot={spot}
               sesionesCount={sesiones.length}
-              onCerrar={() => setMostrarAjustes(false)}
+              onCerrar={cerrarOverlay}
               onGuardarSpot={handleGuardarSpot}
               onBorrarTodo={handleBorrarTodo}
             />
