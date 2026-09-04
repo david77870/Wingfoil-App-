@@ -426,7 +426,7 @@ export default function WindScreen({ spot, condicion, pronostico, pronosticoSema
                   style={{
                     flex: '0 0 auto',
                     width: 68,
-                    background: esFuerte ? 'var(--card-accent-soft)' : '#ffffff',
+                    background: esFuerte ? 'var(--card-accent-soft)' : 'var(--surface)',
                     border: '1px solid var(--border)',
                     borderRadius: 14,
                     padding: '12px 6px',
@@ -470,7 +470,7 @@ export default function WindScreen({ spot, condicion, pronostico, pronosticoSema
             justifyContent: 'center',
             gap: 8,
             background: 'var(--accent)',
-            color: '#ffffff',
+            color: 'var(--on-accent)',
             fontWeight: 600,
             fontSize: 15,
             borderRadius: 14,
@@ -478,7 +478,7 @@ export default function WindScreen({ spot, condicion, pronostico, pronosticoSema
             border: 'none',
           }}
         >
-          <IconPlus />
+          <IconPlus color="var(--on-accent)" />
           Registrar sesión
         </button>
       </div>

@@ -112,7 +112,7 @@ export default function LogSessionScreen({ spot, condicion, onCancelar, onGuarda
           className="rise press"
           onClick={() => setMostrarSpot((v) => !v)}
           style={{
-            background: '#ffffff',
+            background: 'var(--surface)',
             border: '1px solid var(--border)',
             borderRadius: 14,
             padding: '14px 16px',
@@ -136,7 +136,7 @@ export default function LogSessionScreen({ spot, condicion, onCancelar, onGuarda
         {mostrarSpot && (
           <div
             style={{
-              background: '#ffffff',
+              background: 'var(--surface)',
               border: '1px solid var(--border)',
               borderRadius: 14,
               padding: '14px 16px',
@@ -156,6 +156,7 @@ export default function LogSessionScreen({ spot, condicion, onCancelar, onGuarda
                 padding: '10px 12px',
                 fontSize: 14,
                 color: 'var(--ink)',
+                background: 'var(--card-alt)',
               }}
             />
             <div style={{ display: 'flex', gap: 8 }}>
@@ -165,7 +166,7 @@ export default function LogSessionScreen({ spot, condicion, onCancelar, onGuarda
                 onChange={(e) => setSpotLat(Number(e.target.value))}
                 placeholder="Latitud"
                 step="0.0001"
-                style={{ flex: 1, minWidth: 0, width: '100%', boxSizing: 'border-box', border: '1px solid var(--border)', borderRadius: 10, padding: '10px 12px', fontSize: 13, color: 'var(--ink)' }}
+                style={{ flex: 1, minWidth: 0, width: '100%', boxSizing: 'border-box', border: '1px solid var(--border)', borderRadius: 10, padding: '10px 12px', fontSize: 13, color: 'var(--ink)', background: 'var(--card-alt)' }}
               />
               <input
                 type="number"
@@ -173,7 +174,7 @@ export default function LogSessionScreen({ spot, condicion, onCancelar, onGuarda
                 onChange={(e) => setSpotLon(Number(e.target.value))}
                 placeholder="Longitud"
                 step="0.0001"
-                style={{ flex: 1, minWidth: 0, width: '100%', boxSizing: 'border-box', border: '1px solid var(--border)', borderRadius: 10, padding: '10px 12px', fontSize: 13, color: 'var(--ink)' }}
+                style={{ flex: 1, minWidth: 0, width: '100%', boxSizing: 'border-box', border: '1px solid var(--border)', borderRadius: 10, padding: '10px 12px', fontSize: 13, color: 'var(--ink)', background: 'var(--card-alt)' }}
               />
             </div>
             <button
@@ -201,8 +202,8 @@ export default function LogSessionScreen({ spot, condicion, onCancelar, onGuarda
                 padding: '10px 12px',
                 fontSize: 13,
                 fontWeight: 600,
-                background: 'var(--ink)',
-                color: '#ffffff',
+                background: 'var(--surface-deep)',
+                color: 'var(--on-surface-deep)',
               }}
             >
               Guardar spot
@@ -214,7 +215,7 @@ export default function LogSessionScreen({ spot, condicion, onCancelar, onGuarda
           className="rise press"
           style={{
             position: 'relative',
-            background: '#ffffff',
+            background: 'var(--surface)',
             border: '1px solid var(--border)',
             borderRadius: 14,
             padding: '14px 16px',
@@ -250,7 +251,7 @@ export default function LogSessionScreen({ spot, condicion, onCancelar, onGuarda
           />
         </div>
 
-        <div className="rise" style={{ background: '#ffffff', border: '1px solid var(--border)', borderRadius: 14, padding: '14px 16px', animationDelay: '120ms' }}>
+        <div className="rise" style={{ background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 14, padding: '14px 16px', animationDelay: '120ms' }}>
           <div style={{ fontSize: 10, color: 'var(--muted)', textTransform: 'uppercase', letterSpacing: '.3px', marginBottom: 10 }}>
             Duración
           </div>
@@ -268,14 +269,14 @@ export default function LogSessionScreen({ spot, condicion, onCancelar, onGuarda
             <button
               className="press"
               onClick={() => setDuracionMin((d) => d + 5)}
-              style={{ width: 34, height: 34, borderRadius: 10, background: 'var(--ink)', border: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+              style={{ width: 34, height: 34, borderRadius: 10, background: 'var(--surface-deep)', border: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
             >
               <IconPlus />
             </button>
           </div>
         </div>
 
-        <div className="rise" style={{ background: 'var(--ink)', borderRadius: 14, padding: '14px 16px', animationDelay: '160ms' }}>
+        <div className="rise" style={{ background: 'var(--surface-deep)', borderRadius: 14, padding: '14px 16px', animationDelay: '160ms' }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
               <IconWind color="var(--accent)" />
@@ -283,7 +284,7 @@ export default function LogSessionScreen({ spot, condicion, onCancelar, onGuarda
                 <div style={{ fontSize: 10, color: 'var(--muted-2)', textTransform: 'uppercase', letterSpacing: '.3px' }}>
                   Viento {modoVientoManual ? '(manual)' : '(auto)'}
                 </div>
-                <div className="disp" style={{ fontSize: 15, fontWeight: 600, color: '#ffffff', marginTop: 1 }}>
+                <div className="disp" style={{ fontSize: 15, fontWeight: 600, color: 'var(--on-surface-deep)', marginTop: 1 }}>
                   {modoVientoManual
                     ? `${vientoManual}-${rachaManual}kt · ${direccionManual}`
                     : condicion
@@ -302,7 +303,7 @@ export default function LogSessionScreen({ spot, condicion, onCancelar, onGuarda
                 fontSize: 11,
                 fontWeight: 600,
                 background: modoVientoManual ? 'var(--accent)' : 'rgba(255,255,255,0.12)',
-                color: '#ffffff',
+                color: modoVientoManual ? 'var(--on-accent)' : '#ffffff',
               }}
             >
               {modoVientoManual ? 'Editando' : 'Corregir'}
@@ -346,7 +347,7 @@ export default function LogSessionScreen({ spot, condicion, onCancelar, onGuarda
                         fontSize: 12,
                         fontWeight: d === direccionManual ? 700 : 400,
                         background: d === direccionManual ? 'var(--accent)' : 'rgba(255,255,255,0.12)',
-                        color: '#ffffff',
+                        color: d === direccionManual ? 'var(--on-accent)' : '#ffffff',
                       }}
                     >
                       {d}
@@ -358,7 +359,7 @@ export default function LogSessionScreen({ spot, condicion, onCancelar, onGuarda
           )}
         </div>
 
-        <div className="rise" style={{ background: '#ffffff', border: '1px solid var(--border)', borderRadius: 14, padding: '14px 16px', animationDelay: '200ms' }}>
+        <div className="rise" style={{ background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 14, padding: '14px 16px', animationDelay: '200ms' }}>
           <div style={{ fontSize: 10, color: 'var(--muted)', textTransform: 'uppercase', letterSpacing: '.3px', marginBottom: 10 }}>Equipo</div>
           <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
             {EQUIPO_DISPONIBLE.map((item) => {
@@ -371,8 +372,8 @@ export default function LogSessionScreen({ spot, condicion, onCancelar, onGuarda
                   style={{
                     padding: '8px 14px',
                     borderRadius: 20,
-                    background: sel ? 'var(--ink)' : 'var(--card-alt)',
-                    color: sel ? '#ffffff' : 'var(--ink)',
+                    background: sel ? 'var(--surface-deep)' : 'var(--card-alt)',
+                    color: sel ? 'var(--on-surface-deep)' : 'var(--ink)',
                     fontSize: 12,
                     fontWeight: sel ? 600 : 400,
                     border: 'none',
@@ -385,7 +386,7 @@ export default function LogSessionScreen({ spot, condicion, onCancelar, onGuarda
           </div>
         </div>
 
-        <div className="rise" style={{ background: '#ffffff', border: '1px solid var(--border)', borderRadius: 14, padding: '14px 16px', animationDelay: '240ms' }}>
+        <div className="rise" style={{ background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 14, padding: '14px 16px', animationDelay: '240ms' }}>
           <div style={{ fontSize: 10, color: 'var(--muted)', textTransform: 'uppercase', letterSpacing: '.3px', marginBottom: 10 }}>Cómo estuvo</div>
           <div style={{ display: 'flex', gap: 8 }}>
             {[1, 2, 3, 4, 5].map((n) => (
@@ -396,7 +397,7 @@ export default function LogSessionScreen({ spot, condicion, onCancelar, onGuarda
           </div>
         </div>
 
-        <div className="rise" style={{ background: '#ffffff', border: '1px solid var(--border)', borderRadius: 14, padding: '14px 16px', animationDelay: '270ms' }}>
+        <div className="rise" style={{ background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 14, padding: '14px 16px', animationDelay: '270ms' }}>
           <div style={{ fontSize: 10, color: 'var(--muted)', textTransform: 'uppercase', letterSpacing: '.3px', marginBottom: 10 }}>
             Notas (opcional)
           </div>
@@ -414,6 +415,7 @@ export default function LogSessionScreen({ spot, condicion, onCancelar, onGuarda
               padding: '10px 12px',
               fontSize: 13,
               color: 'var(--ink)',
+              background: 'var(--card-alt)',
               fontFamily: 'inherit',
               resize: 'vertical',
             }}
@@ -433,7 +435,7 @@ export default function LogSessionScreen({ spot, condicion, onCancelar, onGuarda
             justifyContent: 'center',
             gap: 8,
             background: 'var(--accent)',
-            color: '#ffffff',
+            color: 'var(--on-accent)',
             fontWeight: 600,
             fontSize: 15,
             borderRadius: 14,

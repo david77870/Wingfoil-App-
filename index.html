@@ -2,11 +2,21 @@
 <html lang="es">
   <head>
     <meta charset="UTF-8" />
+    <script>
+      (function () {
+        try {
+          var t = localStorage.getItem('wingfoil.tema.v1');
+          if (t === 'claro') document.documentElement.setAttribute('data-theme', 'light');
+          else if (t === 'oscuro') document.documentElement.setAttribute('data-theme', 'dark');
+        } catch (e) {}
+      })();
+    </script>
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
     <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16.png" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-    <meta name="theme-color" content="#10233a" />
+    <meta name="theme-color" content="#10233a" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#050f16" media="(prefers-color-scheme: dark)" />
     <meta name="description" content="Trackeo de sesiones de wingfoil: viento, pronóstico, historial y progreso." />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />

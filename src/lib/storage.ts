@@ -64,3 +64,28 @@ export function obtenerSpot(): Spot {
 export function guardarSpot(spot: Spot): void {
   localStorage.setItem(KEY_SPOT, JSON.stringify(spot));
 }
+
+export type TemaPref = 'sistema' | 'claro' | 'oscuro';
+
+const KEY_TEMA = 'wingfoil.tema.v1';
+
+export function obtenerTema(): TemaPref {
+  try {
+    const raw = localStorage.getItem(KEY_TEMA);
+    return raw === 'claro' || raw === 'oscuro' ? raw : 'sistema';
+  } catch {
+    return 'sistema';
+  }
+}
+
+export function guardarTema(tema: TemaPref): void {
+  localStorage.setItem(KEY_TEMA, tema);
+  aplicarTema(tema);
+}
+
+export function aplicarTema(tema: TemaPref): void {
+  const root = document.documentElement;
+  if (tema === 'claro') root.setAttribute('data-theme', 'light');
+  else if (tema === 'oscuro') root.setAttribute('data-theme', 'dark');
+  else root.removeAttribute('data-theme');
+}

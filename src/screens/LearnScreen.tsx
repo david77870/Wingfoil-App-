@@ -30,7 +30,7 @@ export default function LearnScreen({ onAjustes }: Props) {
             key={tip.titulo}
             className="rise"
             style={{
-              background: '#ffffff',
+              background: 'var(--surface)',
               border: '1px solid var(--border)',
               borderRadius: 14,
               padding: '16px 16px',

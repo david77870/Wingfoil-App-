@@ -1,5 +1,6 @@
 :root {
   --bg: radial-gradient(130% 90% at 50% -15%, #edf7f6 0%, #e8f1f1 55%, #e3ecea 100%);
+  --body-bg: #dde9e7;
   --ink: #18324a;
   --ink-2: #123b67;
   --accent: #287fe0;
@@ -14,8 +15,65 @@
   --card-accent-soft: #dbeaf5;
   --star-empty: #d8d9d6;
   --danger: #d64545;
+  --surface: #ffffff;
+  --surface-deep: #18324a;
+  --on-surface-deep: #ffffff;
+  --on-accent: #ffffff;
 
   color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    --bg: radial-gradient(130% 90% at 50% -15%, #0e2733 0%, #0a1e29 55%, #071620 100%);
+    --body-bg: #050f16;
+    --ink: #eafcfd;
+    --ink-2: #cdeef0;
+    --accent: #8fe6ea;
+    --accent-2: #5fb8c4;
+    --teal: #3fc2cc;
+    --warm: #f0a458;
+    --muted: #8fadb8;
+    --muted-2: #6c8993;
+    --icon-muted: #4d6870;
+    --border: rgba(234, 252, 253, 0.14);
+    --card-alt: rgba(234, 252, 253, 0.06);
+    --card-accent-soft: rgba(143, 230, 234, 0.14);
+    --star-empty: #2c4750;
+    --danger: #ff7a7a;
+    --surface: #0e232d;
+    --surface-deep: #071620;
+    --on-surface-deep: #eafcfd;
+    --on-accent: #071620;
+
+    color-scheme: dark;
+  }
+}
+
+/* Selección manual de tema (independiente del sistema operativo) */
+:root[data-theme='dark'] {
+  --bg: radial-gradient(130% 90% at 50% -15%, #0e2733 0%, #0a1e29 55%, #071620 100%);
+  --body-bg: #050f16;
+  --ink: #eafcfd;
+  --ink-2: #cdeef0;
+  --accent: #8fe6ea;
+  --accent-2: #5fb8c4;
+  --teal: #3fc2cc;
+  --warm: #f0a458;
+  --muted: #8fadb8;
+  --muted-2: #6c8993;
+  --icon-muted: #4d6870;
+  --border: rgba(234, 252, 253, 0.14);
+  --card-alt: rgba(234, 252, 253, 0.06);
+  --card-accent-soft: rgba(143, 230, 234, 0.14);
+  --star-empty: #2c4750;
+  --danger: #ff7a7a;
+  --surface: #0e232d;
+  --surface-deep: #071620;
+  --on-surface-deep: #eafcfd;
+  --on-accent: #071620;
+
+  color-scheme: dark;
 }
 
 * {
@@ -30,7 +88,7 @@ body {
 
 body {
   font-family: 'Manrope', system-ui, sans-serif;
-  background: #dde9e7;
+  background: var(--body-bg);
   color: var(--ink);
   -webkit-tap-highlight-color: transparent;
 }

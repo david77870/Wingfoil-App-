@@ -1,6 +1,6 @@
 // Iconos SVG inline, tomados 1:1 de los mockups de diseño (stroke-based, minimal).
 
-export function IconWind({ color = '#10233a', size = 20 }: { color?: string; size?: number }) {
+export function IconWind({ color = 'var(--ink)', size = 20 }: { color?: string; size?: number }) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
       <path d="M3 12h13a3 3 0 1 0-2.5-4.7" />
@@ -10,7 +10,7 @@ export function IconWind({ color = '#10233a', size = 20 }: { color?: string; siz
   );
 }
 
-export function IconHistory({ color = '#10233a', size = 20 }: { color?: string; size?: number }) {
+export function IconHistory({ color = 'var(--ink)', size = 20 }: { color?: string; size?: number }) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
       <path d="M3 3v18h18" />
@@ -19,7 +19,7 @@ export function IconHistory({ color = '#10233a', size = 20 }: { color?: string; 
   );
 }
 
-export function IconBook({ color = '#10233a', size = 20 }: { color?: string; size?: number }) {
+export function IconBook({ color = 'var(--ink)', size = 20 }: { color?: string; size?: number }) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
       <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
@@ -28,7 +28,7 @@ export function IconBook({ color = '#10233a', size = 20 }: { color?: string; siz
   );
 }
 
-export function IconUser({ color = '#10233a', size = 16 }: { color?: string; size?: number }) {
+export function IconUser({ color = 'var(--ink)', size = 16 }: { color?: string; size?: number }) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
       <circle cx="12" cy="7" r="4" />
@@ -37,7 +37,7 @@ export function IconUser({ color = '#10233a', size = 16 }: { color?: string; siz
   );
 }
 
-export function IconArrowUp({ color = '#2f7de0', size = 14 }: { color?: string; size?: number }) {
+export function IconArrowUp({ color = 'var(--accent)', size = 14 }: { color?: string; size?: number }) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
       <line x1="12" y1="19" x2="12" y2="5" />
@@ -55,7 +55,7 @@ export function IconPlus({ color = '#ffffff', size = 18 }: { color?: string; siz
   );
 }
 
-export function IconBack({ color = '#10233a', size = 16 }: { color?: string; size?: number }) {
+export function IconBack({ color = 'var(--ink)', size = 16 }: { color?: string; size?: number }) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
       <line x1="19" y1="12" x2="5" y2="12" />
@@ -64,7 +64,7 @@ export function IconBack({ color = '#10233a', size = 16 }: { color?: string; siz
   );
 }
 
-export function IconChevronRight({ color = '#aebdd1', size = 16 }: { color?: string; size?: number }) {
+export function IconChevronRight({ color = 'var(--icon-muted)', size = 16 }: { color?: string; size?: number }) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round">
       <polyline points="9 6 15 12 9 18" />
@@ -72,7 +72,7 @@ export function IconChevronRight({ color = '#aebdd1', size = 16 }: { color?: str
   );
 }
 
-export function IconPin({ color = '#7c8ea3', size = 18 }: { color?: string; size?: number }) {
+export function IconPin({ color = 'var(--muted)', size = 18 }: { color?: string; size?: number }) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
       <path d="M12 21c-4-4.5-7-8-7-11a7 7 0 0 1 14 0c0 3-3 6.5-7 11z" />
@@ -81,7 +81,7 @@ export function IconPin({ color = '#7c8ea3', size = 18 }: { color?: string; size
   );
 }
 
-export function IconCalendar({ color = '#7c8ea3', size = 18 }: { color?: string; size?: number }) {
+export function IconCalendar({ color = 'var(--muted)', size = 18 }: { color?: string; size?: number }) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
       <rect x="3" y="4" width="18" height="18" rx="3" />
@@ -92,7 +92,7 @@ export function IconCalendar({ color = '#7c8ea3', size = 18 }: { color?: string;
   );
 }
 
-export function IconMinus({ color = '#10233a', size = 14 }: { color?: string; size?: number }) {
+export function IconMinus({ color = 'var(--ink)', size = 14 }: { color?: string; size?: number }) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2.4" strokeLinecap="round">
       <line x1="5" y1="12" x2="19" y2="12" />
@@ -106,8 +106,8 @@ export function IconStar({ filled = true, size = 26 }: { filled?: boolean; size?
       width={size}
       height={size}
       viewBox="0 0 24 24"
-      fill={filled ? '#2f7de0' : 'none'}
-      stroke={filled ? '#2f7de0' : '#d8d9d6'}
+      fill={filled ? 'var(--accent)' : 'none'}
+      stroke={filled ? 'var(--accent)' : 'var(--star-empty)'}
       strokeWidth="1.5"
     >
       <polygon points="12 2 15 9 22 9.5 16.5 14 18.5 21 12 17 5.5 21 7.5 14 2 9.5 9 9" />
@@ -115,7 +115,7 @@ export function IconStar({ filled = true, size = 26 }: { filled?: boolean; size?
   );
 }
 
-export function IconMenu({ color = '#10233a', size = 16 }: { color?: string; size?: number }) {
+export function IconMenu({ color = 'var(--ink)', size = 16 }: { color?: string; size?: number }) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
       <line x1="4" y1="6" x2="20" y2="6" />
@@ -125,7 +125,7 @@ export function IconMenu({ color = '#10233a', size = 16 }: { color?: string; siz
   );
 }
 
-export function IconSettings({ color = '#10233a', size = 18 }: { color?: string; size?: number }) {
+export function IconSettings({ color = 'var(--ink)', size = 18 }: { color?: string; size?: number }) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
       <circle cx="12" cy="12" r="3" />
@@ -134,7 +134,7 @@ export function IconSettings({ color = '#10233a', size = 18 }: { color?: string;
   );
 }
 
-export function IconTrash({ color = '#7c8ea3', size = 16 }: { color?: string; size?: number }) {
+export function IconTrash({ color = 'var(--muted)', size = 16 }: { color?: string; size?: number }) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
       <polyline points="3 6 5 6 21 6" />

@@ -51,7 +51,7 @@ export default function HistoryScreen({ sesiones, onEliminar, onVerSesion, onAju
       <ScreenHeader title="Tu progreso" rightIcon={<IconSettings />} onRightIconClick={onAjustes} />
 
       <div className="rise" style={{ padding: '0 20px', animationDelay: '60ms' }}>
-        <div style={{ background: 'var(--ink)', borderRadius: 20, padding: '22px 22px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        <div style={{ background: 'var(--surface-deep)', borderRadius: 20, padding: '22px 22px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <div>
             <div style={{ fontSize: 11, color: 'var(--muted-2)', textTransform: 'uppercase', letterSpacing: '.3px' }}>Total sesiones</div>
             <div className="disp" style={{ fontSize: 36, fontWeight: 700, color: '#ffffff', marginTop: 2 }}>
@@ -121,7 +121,7 @@ export default function HistoryScreen({ sesiones, onEliminar, onVerSesion, onAju
                   display: 'flex',
                   alignItems: 'center',
                   gap: 12,
-                  background: '#ffffff',
+                  background: 'var(--surface)',
                   border: '1px solid var(--border)',
                   borderRadius: 14,
                   padding: '12px 14px',

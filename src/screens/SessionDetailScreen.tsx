@@ -58,12 +58,12 @@ export default function SessionDetailScreen({ sesion, onCerrar, onEliminar }: Pr
       </div>
 
       <div style={{ flex: 1, overflowY: 'auto', padding: '14px 20px 20px 20px', display: 'flex', flexDirection: 'column', gap: 12 }}>
-        <div className="rise" style={{ background: 'var(--ink)', borderRadius: 14, padding: '18px 16px', animationDelay: '40ms' }}>
+        <div className="rise" style={{ background: 'var(--surface-deep)', borderRadius: 14, padding: '18px 16px', animationDelay: '40ms' }}>
           <div style={{ fontSize: 10, color: 'var(--muted-2)', textTransform: 'uppercase', letterSpacing: '.3px' }}>
             {formatearFechaCorta(sesion.fechaHoraISO)}
           </div>
-          <div className="disp" style={{ fontSize: 22, fontWeight: 700, color: '#ffffff', marginTop: 4, display: 'flex', alignItems: 'center', gap: 8 }}>
-            <IconPin color="#ffffff" size={18} />
+          <div className="disp" style={{ fontSize: 22, fontWeight: 700, color: 'var(--on-surface-deep)', marginTop: 4, display: 'flex', alignItems: 'center', gap: 8 }}>
+            <IconPin color="var(--on-surface-deep)" size={18} />
             {sesion.spot}
           </div>
           <div style={{ display: 'flex', gap: 8, marginTop: 10 }}>
@@ -74,14 +74,14 @@ export default function SessionDetailScreen({ sesion, onCerrar, onEliminar }: Pr
         </div>
 
         <div style={{ display: 'flex', gap: 10 }}>
-          <div className="rise" style={{ flex: 1, background: '#ffffff', border: '1px solid var(--border)', borderRadius: 14, padding: '14px 16px', animationDelay: '80ms' }}>
+          <div className="rise" style={{ flex: 1, background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 14, padding: '14px 16px', animationDelay: '80ms' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}>
               <IconCalendar size={16} />
               <div style={{ fontSize: 10, color: 'var(--muted)', textTransform: 'uppercase', letterSpacing: '.3px' }}>Duración</div>
             </div>
             <div className="disp" style={{ fontSize: 18, fontWeight: 700 }}>{formatearDuracion(sesion.duracionMin)}</div>
           </div>
-          <div className="rise" style={{ flex: 1, background: '#ffffff', border: '1px solid var(--border)', borderRadius: 14, padding: '14px 16px', animationDelay: '110ms' }}>
+          <div className="rise" style={{ flex: 1, background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 14, padding: '14px 16px', animationDelay: '110ms' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}>
               <IconWind size={16} />
               <div style={{ fontSize: 10, color: 'var(--muted)', textTransform: 'uppercase', letterSpacing: '.3px' }}>Viento</div>
@@ -94,7 +94,7 @@ export default function SessionDetailScreen({ sesion, onCerrar, onEliminar }: Pr
         </div>
 
         {equipo.length > 0 && (
-          <div className="rise" style={{ background: '#ffffff', border: '1px solid var(--border)', borderRadius: 14, padding: '14px 16px', animationDelay: '140ms' }}>
+          <div className="rise" style={{ background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 14, padding: '14px 16px', animationDelay: '140ms' }}>
             <div style={{ fontSize: 10, color: 'var(--muted)', textTransform: 'uppercase', letterSpacing: '.3px', marginBottom: 10 }}>Equipo</div>
             <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
               {equipo.map((item) => (
@@ -109,7 +109,7 @@ export default function SessionDetailScreen({ sesion, onCerrar, onEliminar }: Pr
           </div>
         )}
 
-        <div className="rise" style={{ background: '#ffffff', border: '1px solid var(--border)', borderRadius: 14, padding: '14px 16px', animationDelay: '170ms' }}>
+        <div className="rise" style={{ background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 14, padding: '14px 16px', animationDelay: '170ms' }}>
           <div style={{ fontSize: 10, color: 'var(--muted)', textTransform: 'uppercase', letterSpacing: '.3px', marginBottom: 10 }}>Notas</div>
           {sesion.notas ? (
             <div style={{ fontSize: 14, color: 'var(--ink)', lineHeight: 1.5, whiteSpace: 'pre-wrap' }}>{sesion.notas}</div>

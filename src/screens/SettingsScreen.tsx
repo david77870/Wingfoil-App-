@@ -1,6 +1,13 @@
 import { useState } from 'react';
 import type { Spot } from '../types';
 import { IconBack, IconPin, IconTrash } from '../components/icons';
+import { obtenerTema, guardarTema, type TemaPref } from '../lib/storage';
+
+const TEMA_OPCIONES: { value: TemaPref; label: string }[] = [
+  { value: 'sistema', label: 'Automático' },
+  { value: 'claro', label: 'Claro' },
+  { value: 'oscuro', label: 'Oscuro' },
+];
 
 interface Props {
   spot: Spot;
@@ -16,6 +23,12 @@ export default function SettingsScreen({ spot, sesionesCount, onCerrar, onGuarda
   const [spotLon, setSpotLon] = useState(spot.lon);
   const [ubicando, setUbicando] = useState(false);
   const [guardado, setGuardado] = useState(false);
+  const [tema, setTema] = useState<TemaPref>(obtenerTema());
+
+  function cambiarTema(t: TemaPref) {
+    guardarTema(t);
+    setTema(t);
+  }
 
   function usarMiUbicacion() {
     if (!navigator.geolocation) return;
@@ -68,7 +81,7 @@ export default function SettingsScreen({ spot, sesionesCount, onCerrar, onGuarda
       </div>
 
       <div style={{ flex: 1, overflowY: 'auto', padding: '14px 20px 20px 20px', display: 'flex', flexDirection: 'column', gap: 12 }}>
-        <div className="rise" style={{ background: '#ffffff', border: '1px solid var(--border)', borderRadius: 14, padding: '14px 16px', animationDelay: '40ms' }}>
+        <div className="rise" style={{ background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 14, padding: '14px 16px', animationDelay: '40ms' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12 }}>
             <IconPin />
             <div style={{ fontSize: 10, color: 'var(--muted)', textTransform: 'uppercase', letterSpacing: '.3px' }}>Spot por defecto</div>
@@ -87,6 +100,7 @@ export default function SettingsScreen({ spot, sesionesCount, onCerrar, onGuarda
               padding: '10px 12px',
               fontSize: 14,
               color: 'var(--ink)',
+              background: 'var(--card-alt)',
               marginBottom: 10,
             }}
           />
@@ -97,7 +111,7 @@ export default function SettingsScreen({ spot, sesionesCount, onCerrar, onGuarda
               onChange={(e) => setSpotLat(Number(e.target.value))}
               placeholder="Latitud"
               step="0.0001"
-              style={{ flex: 1, minWidth: 0, width: '100%', boxSizing: 'border-box', border: '1px solid var(--border)', borderRadius: 10, padding: '10px 12px', fontSize: 13, color: 'var(--ink)' }}
+              style={{ flex: 1, minWidth: 0, width: '100%', boxSizing: 'border-box', border: '1px solid var(--border)', borderRadius: 10, padding: '10px 12px', fontSize: 13, color: 'var(--ink)', background: 'var(--card-alt)' }}
             />
             <input
               type="number"
@@ -105,7 +119,7 @@ export default function SettingsScreen({ spot, sesionesCount, onCerrar, onGuarda
               onChange={(e) => setSpotLon(Number(e.target.value))}
               placeholder="Longitud"
               step="0.0001"
-              style={{ flex: 1, minWidth: 0, width: '100%', boxSizing: 'border-box', border: '1px solid var(--border)', borderRadius: 10, padding: '10px 12px', fontSize: 13, color: 'var(--ink)' }}
+              style={{ flex: 1, minWidth: 0, width: '100%', boxSizing: 'border-box', border: '1px solid var(--border)', borderRadius: 10, padding: '10px 12px', fontSize: 13, color: 'var(--ink)', background: 'var(--card-alt)' }}
             />
           </div>
           <button
@@ -136,15 +150,40 @@ export default function SettingsScreen({ spot, sesionesCount, onCerrar, onGuarda
               padding: '10px 12px',
               fontSize: 13,
               fontWeight: 600,
-              background: guardado ? '#43c07f' : 'var(--ink)',
-              color: '#ffffff',
+              background: guardado ? '#43c07f' : 'var(--surface-deep)',
+              color: 'var(--on-surface-deep)',
             }}
           >
             {guardado ? 'Guardado ✓' : 'Guardar spot'}
           </button>
         </div>
 
-        <div className="rise" style={{ background: '#ffffff', border: '1px solid var(--border)', borderRadius: 14, padding: '14px 16px', animationDelay: '80ms' }}>
+        <div className="rise" style={{ background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 14, padding: '14px 16px', animationDelay: '60ms' }}>
+          <div style={{ fontSize: 10, color: 'var(--muted)', textTransform: 'uppercase', letterSpacing: '.3px', marginBottom: 10 }}>Apariencia</div>
+          <div style={{ display: 'flex', gap: 8 }}>
+            {TEMA_OPCIONES.map((o) => (
+              <button
+                key={o.value}
+                className="press"
+                onClick={() => cambiarTema(o.value)}
+                style={{
+                  flex: 1,
+                  padding: '9px 0',
+                  borderRadius: 10,
+                  border: 'none',
+                  fontSize: 12,
+                  fontWeight: tema === o.value ? 600 : 400,
+                  background: tema === o.value ? 'var(--surface-deep)' : 'var(--card-alt)',
+                  color: tema === o.value ? 'var(--on-surface-deep)' : 'var(--ink)',
+                }}
+              >
+                {o.label}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div className="rise" style={{ background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 14, padding: '14px 16px', animationDelay: '90ms' }}>
           <div style={{ fontSize: 10, color: 'var(--muted)', textTransform: 'uppercase', letterSpacing: '.3px', marginBottom: 6 }}>Tus datos</div>
           <div style={{ fontSize: 13, color: 'var(--ink)', marginBottom: 12 }}>
             {sesionesCount} {sesionesCount === 1 ? 'sesión' : 'sesiones'} guardada{sesionesCount === 1 ? '' : 's'} solo en este dispositivo.
