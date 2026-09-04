@@ -461,7 +461,7 @@ export default function WindScreen({ spot, condicion, pronostico, pronosticoSema
 
       <div style={{ padding: '14px 20px 14px 20px' }}>
         <button
-          className="press"
+          className="press btn-pulse"
           onClick={onNuevaSesion}
           style={{
             width: '100%',
